@@ -50,7 +50,7 @@ namespace obc {
             return result;
 		}
 
-        void MatrixVecMul(const std::vector<double>& A, const size_t m, const size_t n, 
+        void MatrixVecMul(const std::vector<double>& A, const size_t m, const size_t n, bool transpose,
 			const std::vector<double>& x, 
 			std::vector<double>& y) { 
 			const size_t lda = m;
@@ -61,7 +61,7 @@ namespace obc {
 			double* d_x = nullptr;
 			double* d_y = nullptr;
 
-			cublasOperation_t transa = CUBLAS_OP_N;
+			cublasOperation_t transa = transpose ? CUBLAS_OP_T : CUBLAS_OP_N;
 
 			/* step 2: copy data to device */
 			CUDA_CHECK(cudaMalloc(reinterpret_cast<void**>(&d_A), sizeof(double) * A.size()));
@@ -126,16 +126,100 @@ namespace obc {
 			CUDA_CHECK(cudaFree(d_C));
 		}
 
+		__global__ void VecScalarAddKernel(const double* A, double scalar, double* y, size_t N) {
+			// Get our global thread ID
+			int id = blockIdx.x * blockDim.x + threadIdx.x;
+
+			// Make sure we do not go out of bounds
+			if (id < N) {
+				y[id] = y[id] + (A[id] * scalar);
+			}
+		}
+
+		void MatrixMatrixAdd(const std::vector<double>& A, double scalar, std::vector<double>& y) {
+			const size_t N = A.size();
+			const size_t size = N * sizeof(double);
+
+			double* d_A = nullptr;
+			double* d_y = nullptr;
+
+			CUDA_CHECK(cudaMalloc(reinterpret_cast<void**>(&d_A), size));
+			CUDA_CHECK(cudaMalloc(reinterpret_cast<void**>(&d_y), size));
+
+			CUDA_CHECK(cudaMemcpy(d_A, A.data(), size, cudaMemcpyHostToDevice));
+
+			const size_t threads_per_block = 256;
+			const size_t num_blocks = (N + threads_per_block - 1) / threads_per_block;
+
+			VecScalarAddKernel<<<num_blocks, threads_per_block>>>(d_A, scalar, d_y, N);
+			cudaDeviceSynchronize();
+
+			CUDA_CHECK(cudaMemcpy(y.data(), d_y, size, cudaMemcpyDeviceToHost));
+
+			CUDA_CHECK(cudaFree(d_A));
+			CUDA_CHECK(cudaFree(d_y));
+		}
+
+		__global__ void VecVecElementwiseMulKernel(const double* A, const double* B, double* C, size_t N) {
+			// Get our global thread ID
+			int id = blockIdx.x * blockDim.x + threadIdx.x;
+
+			// Make sure we do not go out of bounds
+			if (id < N) {
+				C[id] = A[id] * B[id];
+			}
+		}
+
+		void VecVecElementwiseMul(const std::vector<double>& A, const std::vector<double>& B, std::vector<double>& C) {
+			const size_t N = A.size();
+			const size_t size = N * sizeof(double);
+
+			double* d_A = nullptr;
+			double* d_B = nullptr;
+			double* d_C = nullptr;
+
+			CUDA_CHECK(cudaMalloc(reinterpret_cast<void**>(&d_A), size));
+			CUDA_CHECK(cudaMalloc(reinterpret_cast<void**>(&d_B), size));
+			CUDA_CHECK(cudaMalloc(reinterpret_cast<void**>(&d_C), size));
+
+			CUDA_CHECK(cudaMemcpy(d_A, A.data(), size, cudaMemcpyHostToDevice));
+			CUDA_CHECK(cudaMemcpy(d_B, B.data(), size, cudaMemcpyHostToDevice));
+
+			const size_t threads_per_block = 256;
+			const size_t num_blocks = (N + threads_per_block - 1) / threads_per_block;
+
+			VecVecElementwiseMulKernel<<<num_blocks, threads_per_block>>>(d_A, d_B, d_C, N);
+			cudaDeviceSynchronize();
+
+			CUDA_CHECK(cudaMemcpy(C.data(), d_C, size, cudaMemcpyDeviceToHost));
+
+			CUDA_CHECK(cudaFree(d_A));
+			CUDA_CHECK(cudaFree(d_B));
+			CUDA_CHECK(cudaFree(d_C));
+		}
+
 		// template instantiation
 		template void ApplyFunc<FunctionType::kSigmoid>(std::vector<double>& A);
 		template void ApplyFunc<FunctionType::kSigmoid>(const std::vector<double>& A, std::vector<double>& y);
+		template void ApplyFunc<FunctionType::kSigmoidPrime>(std::vector<double>& A);
+		template void ApplyFunc<FunctionType::kSigmoidPrime>(const std::vector<double>& A, std::vector<double>& y);
+
 		template void ApplyFunc<FunctionType::kReLu>(std::vector<double>& A);
 		template void ApplyFunc<FunctionType::kReLu>(const std::vector<double>& A, std::vector<double>& y);
+		template void ApplyFunc<FunctionType::kReLuPrime>(std::vector<double>& A);
+		template void ApplyFunc<FunctionType::kReLuPrime>(const std::vector<double>& A, std::vector<double>& y);
+
 		__device__ double Sigmoid(double x) {
 			return 1 / (1 + exp(-x));
 		}
+		__device__ double SigmoidPrime(double x) {
+			return Sigmoid(x) * (1 - Sigmoid(x));
+		}
 		__device__ double ReLu(double x) {
 			return x > 0 ? x : 0;
+		}
+		__device__ double ReLuPrime(double x) {
+			return x > 0 ? 1 : 0;
 		}
 		template <FunctionType func>
 		__global__ void ApplyFuncKernel(double* A, size_t N) {

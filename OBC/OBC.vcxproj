@@ -151,6 +151,7 @@
     <ClInclude Include="src\obc\cuda utilities\cublas_utils.h" />
     <ClInclude Include="src\obc\cuda utilities\cuda_ops.h" />
     <ClInclude Include="src\obc\DenseLayer.h" />
+    <ClInclude Include="src\obc\Error.h" />
     <ClInclude Include="src\obc\Layer.h" />
     <ClInclude Include="src\obc\Network.h" />
   </ItemGroup>

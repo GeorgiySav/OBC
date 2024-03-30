@@ -29,6 +29,9 @@ namespace obc {
 		virtual const std::vector<double>* Forward(const std::vector<double>* input) = 0;
 		virtual const std::vector<double>* ForwardGpu(const std::vector<double>* input) = 0;
 
+		virtual const std::vector<double> Backward(const std::vector<double> output_gradients, double learning_rate) = 0;
+		virtual const std::vector<double> BackwardGpu(const std::vector<double> output_gradients, double learning_rate) = 0;
+
 		virtual LayerType GetType() const = 0;
 		
 	protected:
