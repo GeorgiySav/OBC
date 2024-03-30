@@ -1,0 +1,34 @@
+Package: vcpkg-cmake-config
+Version: 2022-02-06
+Port-Version: 1
+Architecture: x64-windows
+Multi-Arch: same
+Abi: 12f784f99a7fc0a7a4e9ba24097de9e0cb0d66a213e32aff1c67fbd11ebe566f
+Status: install ok installed
+
+Package: vcpkg-cmake
+Version: 2023-05-04
+Architecture: x64-windows
+Multi-Arch: same
+Abi: ecb04811d5bc3c3df9e462bce9754075648c34e7d405216c05840be8b88d6b88
+Status: install ok installed
+
+Package: asio
+Version: 1.29.0
+Depends: vcpkg-cmake, vcpkg-cmake-config
+Architecture: x64-windows
+Multi-Arch: same
+Abi: 806c8df5f60f05f6f7f40580b6d02577d2c743ffc21ef89a54ac1a35a1007f47
+Description: Asio is a cross-platform C++ library for network and low-level I/O programming that provides developers with a consistent asynchronous model using a modern C++ approach.
+Status: install ok installed
+
+Package: restbed
+Version: 4.8
+Port-Version: 3
+Depends: asio, vcpkg-cmake, vcpkg-cmake-config
+Architecture: x64-windows
+Multi-Arch: same
+Abi: ed66ef0d9a4c2ff4420b615707cc49a3661ad3ccca95451f83f5721797d2c842
+Description: Corvusoft's Restbed framework brings asynchronous RESTful functionality to C++14 applications.
+Status: install ok installed
+
