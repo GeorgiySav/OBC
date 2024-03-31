@@ -33,6 +33,7 @@ namespace obc {
 		}
 
 		const std::vector<double> Backward(const std::vector<double> output_gradients, double learning_rate) override {
+			// dE/dx = dE/dy elementwise_mul f'(x)
 			std::vector<double> input_gradients(input_->size());
 			for (size_t i = 0; i < input_gradients.size(); i++) {
 				input_gradients[i] = output_gradients[i] * activation_derivative_(input_->at(i));
@@ -41,7 +42,8 @@ namespace obc {
 		}
 		const std::vector<double> BackwardGpu(const std::vector<double> output_gradients, double learning_rate) override {
 			std::vector<double> input_gradients(input_->size());
-			activation_derivative_gpu_(output_gradients, input_gradients);
+			activation_derivative_gpu_(*input_, input_gradients);
+			cuda::VecVecElementwiseMul(output_gradients, input_gradients, input_gradients);
 			return input_gradients;
 		}
 

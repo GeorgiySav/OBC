@@ -142,6 +142,7 @@
     <ClCompile Include="src\main.cpp" />
     <CudaCompile Include="src\obc\cuda utilities\cuda_ops.cu" />
     <ClCompile Include="src\obc\DenseLayer.cpp" />
+    <ClCompile Include="src\obc\example models\Xor.cpp" />
     <ClCompile Include="src\obc\Network.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -152,6 +153,7 @@
     <ClInclude Include="src\obc\cuda utilities\cuda_ops.h" />
     <ClInclude Include="src\obc\DenseLayer.h" />
     <ClInclude Include="src\obc\Error.h" />
+    <ClInclude Include="src\obc\example models\Xor.h" />
     <ClInclude Include="src\obc\Layer.h" />
     <ClInclude Include="src\obc\Network.h" />
   </ItemGroup>

@@ -6,6 +6,7 @@
 #include "Layer.h"
 #include "DenseLayer.h"
 #include "ActivationFunctions.h"
+#include "Error.h"
 
 #include "crow_all.h"
 
@@ -38,7 +39,7 @@ namespace obc {
 		}
 
 		// gradient descent based training
-		void Train(const std::vector<std::vector<double>>& X, const std::vector<std::vector<double>>& Y, size_t epochs, double learning_rate);
+		void Train(const std::vector<std::vector<double>>& X, const std::vector<std::vector<double>>& Y, size_t epochs, double learning_rate, ErrorFunction error);
 	
 		// Returns a json which represents the structure of the network
 		crow::json::wvalue ToJsonSpine();

@@ -52,7 +52,8 @@ namespace obc {
 
         void MatrixVecMul(const std::vector<double>& A, const size_t m, const size_t n, bool transpose,
 			const std::vector<double>& x, 
-			std::vector<double>& y) { 
+			std::vector<double>& y) {
+
 			const size_t lda = m;
 			double alpha = 1.0;
 			double beta = 0.0;
@@ -88,6 +89,46 @@ namespace obc {
 			CUDA_CHECK(cudaFree(d_y));
         }
 
+		void MatrixMatrixMul(
+			const size_t m, const size_t k, const size_t n,
+			const std::vector<double>& A, bool transposeA,
+			const std::vector<double>& B, bool transposeB,
+			std::vector<double>& C) {
+
+			const size_t lda = transposeA ? k : m;
+			const size_t ldb = transposeB ? n : k;
+			const size_t ldc = m;
+
+			double alpha = 1.0;
+			double beta = 0.0;
+
+			double* d_A = nullptr;
+			double* d_B = nullptr;
+			double* d_C = nullptr;
+
+			cublasOperation_t transa = transposeA ? CUBLAS_OP_T : CUBLAS_OP_N;
+			cublasOperation_t transb = transposeB ? CUBLAS_OP_T : CUBLAS_OP_N;
+
+			CUDA_CHECK(cudaMalloc(reinterpret_cast<void**>(&d_A), sizeof(double) * A.size()));
+			CUDA_CHECK(cudaMalloc(reinterpret_cast<void**>(&d_B), sizeof(double) * B.size()));
+			CUDA_CHECK(cudaMalloc(reinterpret_cast<void**>(&d_C), sizeof(double) * C.size()));
+
+			CUDA_CHECK(cudaMemcpyAsync(d_A, A.data(), sizeof(double) * A.size(), cudaMemcpyHostToDevice,
+				stream));
+			CUDA_CHECK(cudaMemcpyAsync(d_B, B.data(), sizeof(double) * B.size(), cudaMemcpyHostToDevice,
+				stream));
+
+			CUBLAS_CHECK(
+				cublasDgemm(cublasH, transa, transb, m, n, k, &alpha, d_A, lda, d_B, ldb, &beta, d_C, ldc));
+
+			CUDA_CHECK(cudaMemcpyAsync(C.data(), d_C, sizeof(double) * C.size(), cudaMemcpyDeviceToHost, stream));
+
+			CUDA_CHECK(cudaStreamSynchronize(stream));
+
+			CUDA_CHECK(cudaFree(d_A));
+			CUDA_CHECK(cudaFree(d_B));
+			CUDA_CHECK(cudaFree(d_C));
+		}
 
 		__global__ void VecVecAddKernel(const double* A, const double* B, double* C, size_t N) {
 			// Get our global thread ID
@@ -147,6 +188,7 @@ namespace obc {
 			CUDA_CHECK(cudaMalloc(reinterpret_cast<void**>(&d_y), size));
 
 			CUDA_CHECK(cudaMemcpy(d_A, A.data(), size, cudaMemcpyHostToDevice));
+			CUDA_CHECK(cudaMemcpy(d_y, y.data(), size, cudaMemcpyHostToDevice));
 
 			const size_t threads_per_block = 256;
 			const size_t num_blocks = (N + threads_per_block - 1) / threads_per_block;
@@ -213,7 +255,8 @@ namespace obc {
 			return 1 / (1 + exp(-x));
 		}
 		__device__ double SigmoidPrime(double x) {
-			return Sigmoid(x) * (1 - Sigmoid(x));
+			double s = Sigmoid(x);
+			return s * (1 - s);
 		}
 		__device__ double ReLu(double x) {
 			return x > 0 ? x : 0;
@@ -231,9 +274,15 @@ namespace obc {
 				if constexpr (func == FunctionType::kSigmoid) {
 					A[id] = Sigmoid(A[id]);
 				}
+				else if constexpr (func == FunctionType::kSigmoidPrime) {
+					A[id] = SigmoidPrime(A[id]);
+				}
 				else if constexpr (func == FunctionType::kReLu) {
 					A[id] = ReLu(A[id]);
 				}	
+				else if constexpr (func == FunctionType::kReLuPrime) {
+					A[id] = ReLuPrime(A[id]);
+				}
 			}
 		}
 		template <FunctionType func>
@@ -267,8 +316,14 @@ namespace obc {
 				if constexpr (func == FunctionType::kSigmoid) {
 					y[id] = Sigmoid(A[id]);
 				}
+				else if constexpr (func == FunctionType::kSigmoidPrime) {
+					y[id] = SigmoidPrime(A[id]);
+				}
 				else if constexpr (func == FunctionType::kReLu) {
 					y[id] = ReLu(A[id]);
+				}
+				else if constexpr (func == FunctionType::kReLuPrime) {
+					y[id] = ReLuPrime(A[id]);
 				}
 			}
 		}

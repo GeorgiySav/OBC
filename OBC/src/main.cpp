@@ -4,21 +4,14 @@
 
 #include "obc/cuda utilities/cuda_ops.h"
 
+#include "obc/example models/Xor.h"
+
+
 int main() {
-
-	obc::Network nn = {
-		new obc::DenseLayer(3, 2),
-		new obc::Sigmoid(2)
-	};
-
-	auto cpu_result = nn.Predict({ 1, 2, 3 });
-	std::cout << cpu_result[0] << ", " << cpu_result[1] << std::endl;
 
 	obc::cuda::Init();
 
-	nn.setGpuEnabled(true);
-	auto gpu_result = nn.Predict({ 1, 2, 3 });
-	std::cout << gpu_result[0] << ", " << gpu_result[1] << std::endl;
+	obc::XorModel();
 
 	obc::cuda::Shutdown();
 
