@@ -6,12 +6,15 @@
 
 #include "obc/example models/Xor.h"
 
+#include "obc/example models/SerializationExample.h"
 
 int main() {
 
 	obc::cuda::Init();
 
-	obc::XorModel();
+	// obc::XorModel();
+
+	obc::SerializationExample();
 
 	obc::cuda::Shutdown();
 

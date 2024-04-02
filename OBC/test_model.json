@@ -1,0 +1,63 @@
+{
+    "value0": [
+        {
+            "type": 0,
+            "input_size": 2,
+            "output_size": 3,
+            "hyper_parameters": [
+                {
+                    "key": "biases",
+                    "value": [
+                        0.8893271470747782,
+                        0.425926425185438,
+                        0.12085734840759012
+                    ]
+                },
+                {
+                    "key": "weights",
+                    "value": [
+                        0.4966079744625193,
+                        0.25880887012272477,
+                        0.038899186807306408,
+                        0.7276423668464086,
+                        0.05399477570304431,
+                        0.3976655474644995
+                    ]
+                }
+            ]
+        },
+        {
+            "type": 1,
+            "input_size": 3,
+            "output_size": 3,
+            "hyper_parameters": []
+        },
+        {
+            "type": 0,
+            "input_size": 3,
+            "output_size": 1,
+            "hyper_parameters": [
+                {
+                    "key": "biases",
+                    "value": [
+                        0.77728456370105
+                    ]
+                },
+                {
+                    "key": "weights",
+                    "value": [
+                        0.3174243261747422,
+                        0.13881245146824953,
+                        0.20116594893182736
+                    ]
+                }
+            ]
+        },
+        {
+            "type": 1,
+            "input_size": 1,
+            "output_size": 1,
+            "hyper_parameters": []
+        }
+    ]
+}

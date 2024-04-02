@@ -10,7 +10,7 @@ namespace obc {
 
 		Network cpu_xor_model = {
 			new DenseLayer(2, 3),
-			new Sigmoid(3),
+		    new Sigmoid(3),
 			new DenseLayer(3, 1),
 			new Sigmoid(1)
 		};
@@ -21,7 +21,7 @@ namespace obc {
 		auto start = std::chrono::high_resolution_clock::now();
 
 		// Train the model
-		//cpu_xor_model.Train(inputs, outputs, 10000, 0.1, ErrorFunction::MSE);
+		cpu_xor_model.Train(inputs, outputs, 10000, 0.1, ErrorFunction::MSE);
 		
 		auto end = std::chrono::high_resolution_clock::now();
 

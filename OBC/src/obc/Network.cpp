@@ -44,17 +44,4 @@ namespace obc {
 			std::cout << "Epoch " << epoch << ", Error: " << error << std::endl;
 		}
 	}
-
-	crow::json::wvalue Network::ToJsonSpine() {
-		crow::json::wvalue json;
-
-		for (const auto& layer : layers_) {	
-			switch (layer->GetType()) {
-			case LayerType::Activation:
-				break;
-			}
-
-		}
-		return json;
-	}
 }

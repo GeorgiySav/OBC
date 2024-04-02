@@ -32,15 +32,28 @@ namespace obc {
 		const std::vector<double> Backward(const std::vector<double> output_gradients, double learning_rate) override;
 		const std::vector<double> BackwardGpu(const std::vector<double> output_gradients, double learning_rate) override;
 
+		void SetWeights(const std::vector<double>& weights) {
+			weights_ = weights;
+		}
+		void SetBiases(const std::vector<double>& biases) {
+			biases_ = biases;
+		}
+
+		const ser::LayerData Serialize() const override {
+			ser::LayerData data;	
+			data.type = ser::LayerType::kDense;
+			data.input_size = weights_.size() / biases_.size();
+			data.output_size = biases_.size();
+			data.hyper_parameters["weights"] = weights_;
+			data.hyper_parameters["biases"] = biases_;
+			return data;
+		}
+
+	private:	
 		double GetWeight(size_t input_index, size_t output_index) const {
 			return weights_[input_index * biases_.size() + output_index];
 		}
 
-		LayerType GetType() const override {
-			return LayerType::Dense;
-		}
-
-	private:
 		std::vector<double> weights_;
 		std::vector<double> biases_;
 	};

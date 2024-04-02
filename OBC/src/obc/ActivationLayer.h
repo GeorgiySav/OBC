@@ -1,5 +1,9 @@
 #pragma once
 
+#include <cereal/types/functional.hpp>
+
+#include <functional>
+
 #include "Layer.h"
 
 namespace obc {
@@ -7,10 +11,10 @@ namespace obc {
 	public:
 		// constructor should take in an activation function as a function pointer
 		ActivationLayer(size_t output_size, 
-			double (*activation_function)(double), 
-			void (*activation_function_gpu)(const std::vector<double>&, std::vector<double>&),
-			double (*activation_derivative)(double),
-			void (*activation_derivative_gpu)(const std::vector<double>&, std::vector<double>&))
+			std::function<double(double)> activation_function,
+			std::function<void(const std::vector<double>&, std::vector<double>&)> activation_function_gpu,
+			std::function<double(double)> activation_derivative,
+			std::function<void(const std::vector<double>&, std::vector<double>&)> activation_derivative_gpu)
 			: 
 			Layer(output_size), 
 			activation_function_(activation_function),
@@ -47,13 +51,15 @@ namespace obc {
 			return input_gradients;
 		}
 
-		LayerType GetType() const override {
-			return LayerType::Activation;
+		const ser::LayerData Serialize() const override {
+			ser::LayerData data;
+			return data;
 		}
+
 	private:
-		double (*activation_function_)(double);
-		void (*activation_function_gpu_)(const std::vector<double>&, std::vector<double>&);
-		double (*activation_derivative_)(double);
-		void (*activation_derivative_gpu_)(const std::vector<double>&, std::vector<double>&);
+		std::function<double(double)> activation_function_;
+		std::function<void(const std::vector<double>&, std::vector<double>&)> activation_function_gpu_;
+		std::function<double(double)> activation_derivative_;
+		std::function<void(const std::vector<double>&, std::vector<double>&)> activation_derivative_gpu_;
 	};
 }
