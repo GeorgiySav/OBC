@@ -27,6 +27,13 @@ namespace obc {
 			const std::vector<double>& B, 
 			std::vector<double>& C);
 
+		extern void CrossCorrelate(
+			const std::vector<double>& A, int a_offset, int a_height, int a_width,
+			const std::vector<double>& B, int b_offset, int b_height, int b_width, bool rot180,
+				  std::vector<double>& C, int c_offset, int c_height, int c_width,
+			bool full);
+
+
 		enum class FunctionType {
 			kSigmoid,
 			kSigmoidPrime,

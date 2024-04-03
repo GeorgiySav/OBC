@@ -7,6 +7,7 @@
 #include "Layer.h"
 #include "DenseLayer.h"
 #include "ActivationFunctions.h"
+#include "ConvolutionalLayer.h"
 #include "Error.h"
 
 namespace obc {

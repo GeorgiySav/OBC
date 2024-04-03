@@ -81,6 +81,7 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)/OBC/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -97,6 +98,7 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)/OBC/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -113,6 +115,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)/OBC/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -129,6 +132,7 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)/OBC/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -141,6 +145,7 @@
   <ItemGroup>
     <ClCompile Include="src\main.cpp" />
     <CudaCompile Include="src\obc\cuda utilities\cuda_ops.cu" />
+    <ClCompile Include="src\obc\ConvolutionalLayer.cpp" />
     <ClCompile Include="src\obc\DenseLayer.cpp" />
     <ClCompile Include="src\obc\example models\SerializationExample.cpp" />
     <ClCompile Include="src\obc\example models\Xor.cpp" />
@@ -235,6 +240,7 @@
     <ClInclude Include="include\crow_all.h" />
     <ClInclude Include="src\obc\ActivationFunctions.h" />
     <ClInclude Include="src\obc\ActivationLayer.h" />
+    <ClInclude Include="src\obc\ConvolutionalLayer.h" />
     <ClInclude Include="src\obc\cuda utilities\cublas_utils.h" />
     <ClInclude Include="src\obc\cuda utilities\cuda_ops.h" />
     <ClInclude Include="src\obc\DenseLayer.h" />

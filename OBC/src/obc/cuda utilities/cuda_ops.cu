@@ -240,6 +240,102 @@ namespace obc {
 			CUDA_CHECK(cudaFree(d_C));
 		}
 
+		__global__ void ValidCrossCorrelateKernel(const double* A, int a_height, int a_width,
+			const double* B, int b_height, int b_width, bool rot180,
+			double* C, int c_height, int c_width) {
+
+			int i = threadIdx.x + blockIdx.x * blockDim.x;
+			int j = threadIdx.y + blockIdx.y * blockDim.y;
+
+			int c_index = j * c_width + i;
+
+			for (size_t x = 0; x < b_width; x++) {
+				for (size_t y = 0; y < b_height; y++) {
+					int a_index = (j + y) * a_width + (i + x);
+					int b_index = y * b_width + x;
+					if (rot180)	
+						b_index = (b_height * b_width) - 1 - b_index;
+
+
+					C[c_index] += A[a_index] * B[b_index];
+				}
+			}
+		}
+
+		__global__ void FullCrossCorrelateKernel(const double* A, int a_height, int a_width,
+			const double* B, int b_height, int b_width, bool rot180,
+			double* C, int c_height, int c_width) {
+
+			int adj_i = threadIdx.x + blockIdx.x * blockDim.x;
+			int adj_j = threadIdx.y + blockIdx.y * blockDim.y;
+
+			int i = adj_i - (b_width - 1);
+			int j = adj_j - (b_height - 1);
+
+			int c_index = adj_j * c_width + adj_i;
+
+			for (int x = 0; x < b_width; x++) {
+
+				if (i + x < 0 || i + x >= a_width)
+					continue;
+
+				for (int y = 0; y < b_height; y++) {
+
+					if (j + y < 0 || j + y >= a_height)
+						continue;
+
+					int a_index = (j + y) * a_width + (i + x);
+					int b_index = y * b_width + x;
+					if (rot180)
+						b_index = (b_height * b_width) - 1 - b_index;
+
+					C[c_index] += A[a_index] * B[b_index];
+				}
+			}
+		}
+
+		void CrossCorrelate(
+			const std::vector<double>& A, int a_offset, int a_height, int a_width,
+			const std::vector<double>& B, int b_offset, int b_height, int b_width, bool rot180,
+			std::vector<double>& C, int c_offset, int c_height, int c_width,
+			bool full) {
+
+			double* d_A = nullptr;
+			double* d_B = nullptr;
+			double* d_C = nullptr;
+
+			const size_t a_size = sizeof(double) * (a_height * a_width);
+			CUDA_CHECK(cudaMalloc(reinterpret_cast<void**>(&d_A), a_size));
+			const size_t b_size = sizeof(double) * (b_height * b_width);
+			CUDA_CHECK(cudaMalloc(reinterpret_cast<void**>(&d_B), b_size));
+			const size_t c_size = sizeof(double) * (c_height * c_width);
+			CUDA_CHECK(cudaMalloc(reinterpret_cast<void**>(&d_C), c_size));
+		
+			CUDA_CHECK(cudaMemcpy(d_A, A.data() + a_offset, a_size, cudaMemcpyHostToDevice));
+			CUDA_CHECK(cudaMemcpy(d_B, B.data() + b_offset, b_size, cudaMemcpyHostToDevice));
+			CUDA_CHECK(cudaMemcpy(d_C, C.data() + c_offset, c_size, cudaMemcpyHostToDevice));
+
+			dim3 grid(1, 1, 1);
+			dim3 block;
+
+			if (full) {
+				block = dim3(a_width - (1 - b_width), a_height - (1 - b_height), 1);
+				FullCrossCorrelateKernel<<<grid, block>>>(d_A, a_height, a_width, d_B, b_height, b_width, rot180, d_C, c_height, c_width);
+			}
+			else {
+				block = dim3(a_width - b_width + 1, a_height - b_height + 1, 1);
+				ValidCrossCorrelateKernel<<<grid, block>>>(d_A, a_height, a_width, d_B, b_height, b_width, rot180, d_C, c_height, c_width);
+			}
+
+			cudaDeviceSynchronize();
+
+			CUDA_CHECK(cudaMemcpy(C.data() + c_offset, d_C, c_size, cudaMemcpyDeviceToHost));
+
+			CUDA_CHECK(cudaFree(d_A));
+			CUDA_CHECK(cudaFree(d_B));
+			CUDA_CHECK(cudaFree(d_C));
+		}
+
 		// template instantiation
 		template void ApplyFunc<FunctionType::kSigmoid>(std::vector<double>& A);
 		template void ApplyFunc<FunctionType::kSigmoid>(const std::vector<double>& A, std::vector<double>& y);

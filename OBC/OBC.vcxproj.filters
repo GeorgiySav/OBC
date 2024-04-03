@@ -30,6 +30,9 @@
     <ClCompile Include="src\obc\example models\SerializationExample.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\obc\ConvolutionalLayer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\crow_all.h">
@@ -321,6 +324,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\obc\Serialization.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\obc\ConvolutionalLayer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

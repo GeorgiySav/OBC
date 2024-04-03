@@ -1,4 +1,6 @@
 #include <iostream>
+#include <span>
+#include <algorithm>
 
 #include "obc/Network.h"
 
@@ -14,7 +16,39 @@ int main() {
 
 	// obc::XorModel();
 
-	obc::SerializationExample();
+	//obc::SerializationExample();
+
+	std::vector<double> A = {
+		1, 6, 2,
+		5, 3, 1,
+		7, 0, 4
+	};
+	std::vector<double> B = {
+		1, 2,
+		-1, 0
+	};
+	std::vector<double> C = {
+		0, 0,
+		0, 0
+	};
+
+	obc::cuda::CrossCorrelate(
+		A, 0, 3, 3,
+		B, 0, 2, 2, true,
+		C, 0, 2, 2,
+		false
+	);
+	std::cout;
+	
+
+/*
+0 1
+2 3
+
+
+
+*/
+
 
 	obc::cuda::Shutdown();
 
