@@ -40,7 +40,7 @@ namespace obc {
 		}
 
 		// gradient descent based training
-		void Train(const std::vector<std::vector<double>>& X, const std::vector<std::vector<double>>& Y, size_t epochs, double learning_rate, ErrorFunction error);
+		void Train(const std::vector<std::vector<double>>& X, const std::vector<std::vector<double>>& Y, int epochs, double learning_rate, ErrorFunction error);
 
 		void Serialize(const std::string& file_name, ser::ArchiveType type) const {
 			std::ofstream file(file_name);
@@ -96,7 +96,7 @@ namespace obc {
 
 		void LoadLayerData(const std::vector<ser::LayerData>& data) {
 			layers_.clear();
-			for (size_t i = 0; i < data.size(); i++) {
+			for (int i = 0; i < data.size(); i++) {
 				switch (data[i].type) {
 				case ser::LayerType::kDense: {
 					DenseLayer* new_layer = new DenseLayer(data[i].input_size, data[i].output_size);

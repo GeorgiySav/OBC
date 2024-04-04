@@ -11,7 +11,7 @@ namespace obc {
 	// Each output has a bias.
 	class DenseLayer : public Layer {
 	public:
-		DenseLayer(size_t input_size, size_t output_size)
+		DenseLayer(int input_size, int output_size)
 			: Layer(output_size) {
 
 			std::random_device rnd_device;
@@ -50,7 +50,7 @@ namespace obc {
 		}
 
 	private:	
-		double GetWeight(size_t input_index, size_t output_index) const {
+		double GetWeight(int input_index, int output_index) const {
 			return weights_[input_index * biases_.size() + output_index];
 		}
 

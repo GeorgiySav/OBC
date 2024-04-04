@@ -10,7 +10,7 @@ namespace obc {
 	class ActivationLayer : public Layer {
 	public:
 		// constructor should take in an activation function as a function pointer
-		ActivationLayer(size_t output_size, 
+		ActivationLayer(int output_size, 
 			std::function<double(double)> activation_function,
 			std::function<void(const std::vector<double>&, std::vector<double>&)> activation_function_gpu,
 			std::function<double(double)> activation_derivative,
@@ -25,7 +25,7 @@ namespace obc {
 
 		const std::vector<double>* Forward(const std::vector<double>* input) override {
 			input_ = input;
-			for (size_t i = 0; i < output_.size(); i++) {
+			for (int i = 0; i < output_.size(); i++) {
 				output_[i] = activation_function_(input_->at(i));
 			}
 			return &output_;
@@ -39,7 +39,7 @@ namespace obc {
 		const std::vector<double> Backward(const std::vector<double> output_gradients, double learning_rate) override {
 			// dE/dx = dE/dy elementwise_mul f'(x)
 			std::vector<double> input_gradients(input_->size());
-			for (size_t i = 0; i < input_gradients.size(); i++) {
+			for (int i = 0; i < input_gradients.size(); i++) {
 				input_gradients[i] = output_gradients[i] * activation_derivative_(input_->at(i));
 			}
 			return input_gradients;

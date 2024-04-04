@@ -9,12 +9,12 @@ namespace obc {
 
 		extern double Dot(const std::vector<double>& A, const std::vector<double>& B);	
 
-		extern void MatrixVecMul(const std::vector<double>& A, const size_t m, const size_t n, bool transpose, 
+		extern void MatrixVecMul(const std::vector<double>& A, const int m, const int n, bool transpose, 
 			const std::vector<double>& x, 
 			std::vector<double>& y);
 
 		extern void MatrixMatrixMul(
-			const size_t m, const size_t k, const size_t n,
+			const int m, const int k, const int n,
 			const std::vector<double>& A, bool transposeA, 
 			const std::vector<double>& B, bool transposeB, 
 			std::vector<double>& C);

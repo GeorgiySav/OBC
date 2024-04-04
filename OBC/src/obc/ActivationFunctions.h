@@ -5,7 +5,7 @@
 namespace obc {
 	class Sigmoid : public ActivationLayer {
 	public:
-		Sigmoid(size_t output_size)
+		Sigmoid(int output_size)
 			: ActivationLayer(output_size, 
 				Sigmoid::sigmoid, 
 				static_cast<void(*)(const std::vector<double>&, std::vector<double>&)>(cuda::ApplyFunc<cuda::FunctionType::kSigmoid>),
@@ -31,7 +31,7 @@ namespace obc {
 
 	class ReLU : public ActivationLayer {
 	public:
-		ReLU(size_t output_size)
+		ReLU(int output_size)
 			: ActivationLayer(output_size, 
 				ReLU::relu, 
 				static_cast<void(*)(const std::vector<double>&, std::vector<double>&)>(cuda::ApplyFunc<cuda::FunctionType::kReLu>),

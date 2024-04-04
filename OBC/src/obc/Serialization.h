@@ -24,8 +24,8 @@ namespace obc {
 
 		struct LayerData {
 			LayerType type;
-			size_t input_size;
-			size_t output_size;
+			int input_size;
+			int output_size;
 
 			std::map<std::string, std::vector<double>> hyper_parameters;
 

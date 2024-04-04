@@ -8,9 +8,9 @@
 namespace obc {
 
 	extern void CrossCorrelate(
-		const std::vector<double>& A, size_t a_offset, size_t a_height, size_t a_width,
-		const std::vector<double>& B, size_t b_offset, size_t b_height, size_t b_width,
-		std::vector<double>& C, size_t c_offset, size_t c_height, size_t c_width);
+		const std::vector<double>& A, int a_offset, int a_height, int a_width,
+		const std::vector<double>& B, int b_offset, int b_height, int b_width,
+		std::vector<double>& C, int c_offset, int c_height, int c_width);
 	extern void FullCrossCorrelate(
 		const std::vector<double>& A, int a_offset, int a_height, int a_width,
 		const std::vector<double>& B, int b_offset, int b_height, int b_width,
@@ -19,11 +19,11 @@ namespace obc {
 	class ConvolutionalLayer : public Layer {
 	public:
 		ConvolutionalLayer(
-			size_t input_depth,
-			size_t input_width,
-			size_t input_height,
-			size_t kernel_size,
-			size_t output_depth)
+			int input_depth,
+			int input_width,
+			int input_height,
+			int kernel_size,
+			int output_depth)
 			:
 			Layer(output_depth * (input_width - kernel_size + 1) * (input_height - kernel_size + 1)),
 			input_depth_(input_depth),
@@ -58,32 +58,32 @@ namespace obc {
 		const ser::LayerData Serialize() const override;
 
 //	private:
-		size_t input_depth_;
-		size_t input_width_;
-		size_t input_height_;
+		int input_depth_;
+		int input_width_;
+		int input_height_;
 		
-		size_t output_depth_;
-		size_t output_width_;
-		size_t output_height_;
+		int output_depth_;
+		int output_width_;
+		int output_height_;
 
-		size_t kernel_sets_;
-		size_t kernel_depth_;
-		size_t kernel_size_;
+		int kernel_sets_;
+		int kernel_depth_;
+		int kernel_size_;
 
 		std::vector<double> kernels_;
 		std::vector<double> biases_;
 
-		size_t GetKernelOffset(size_t set, size_t depth) const {
+		int GetKernelOffset(int set, int depth) const {
 			return (set * kernel_depth_+depth) * (kernel_size_ * kernel_size_);
 		}
-		size_t GetKernelIndex(size_t x, size_t y) const {
+		int GetKernelIndex(int x, int y) const {
 			return y * kernel_size_ + x;
 		}
 
-		size_t GetOutputOffset(size_t depth) const {
+		int GetOutputOffset(int depth) const {
 			return depth * output_width_ * output_height_;
 		}
-		size_t GetOutputIndex(size_t x, size_t y) const {
+		int GetOutputIndex(int x, int y) const {
 			return y * output_width_ + x;
 		}
 

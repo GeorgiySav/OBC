@@ -3,9 +3,9 @@
 namespace obc {
 	const std::vector<double>* DenseLayer::Forward(const std::vector<double>* input) {
 		input_ = input;
-		for (size_t i = 0; i < output_.size(); i++) {
+		for (int i = 0; i < output_.size(); i++) {
 			output_[i] = biases_[i];
-			for (size_t j = 0; j < input_->size(); j++) {
+			for (int j = 0; j < input_->size(); j++) {
 				output_[i] += input_->at(j) * GetWeight(j, i);
 			}
 		}
@@ -21,29 +21,29 @@ namespace obc {
 	const std::vector<double> DenseLayer::Backward(const std::vector<double> output_gradients, double learning_rate) {
 		// dE/dW = dE/dY * transpose(X)	
 		std::vector<double> weights_gradients(weights_.size(), 0);
-		for (size_t j = 0; j < input_->size(); j++) {
-			for (size_t i = 0; i < output_gradients.size(); i++) {
-				size_t index = i * input_->size() + j;
+		for (int j = 0; j < input_->size(); j++) {
+			for (int i = 0; i < output_gradients.size(); i++) {
+				int index = i * input_->size() + j;
 				weights_gradients[index] = output_gradients[i] * input_->at(j);
 			}	
 		}
 
 		// dE/dX = transpose(W) * dE/dY
 		std::vector<double> input_gradients(input_->size(), 0);
-		for (size_t j = 0; j < output_gradients.size(); j++) {
-			for (size_t i = 0; i < input_->size(); i++) {
+		for (int j = 0; j < output_gradients.size(); j++) {
+			for (int i = 0; i < input_->size(); i++) {
 				input_gradients[i] += GetWeight(i, j) * output_gradients[j];
 			}
 		}
 
 		// update weights
-		for (size_t i = 0; i < weights_.size(); i++) {
+		for (int i = 0; i < weights_.size(); i++) {
 			weights_[i] -= learning_rate * weights_gradients[i];
 		}
 
 		// dE/dB = dE/dY
 		// update biases
-		for (size_t i = 0; i < biases_.size(); i++) {
+		for (int i = 0; i < biases_.size(); i++) {
 			biases_[i] -= learning_rate * output_gradients[i];
 		}
 		

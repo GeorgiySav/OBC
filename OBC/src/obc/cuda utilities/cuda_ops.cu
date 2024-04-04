@@ -50,11 +50,11 @@ namespace obc {
             return result;
 		}
 
-        void MatrixVecMul(const std::vector<double>& A, const size_t m, const size_t n, bool transpose,
+        void MatrixVecMul(const std::vector<double>& A, const int m, const int n, bool transpose,
 			const std::vector<double>& x, 
 			std::vector<double>& y) {
 
-			const size_t lda = m;
+			const int lda = m;
 			double alpha = 1.0;
 			double beta = 0.0;
 
@@ -90,14 +90,14 @@ namespace obc {
         }
 
 		void MatrixMatrixMul(
-			const size_t m, const size_t k, const size_t n,
+			const int m, const int k, const int n,
 			const std::vector<double>& A, bool transposeA,
 			const std::vector<double>& B, bool transposeB,
 			std::vector<double>& C) {
 
-			const size_t lda = transposeA ? k : m;
-			const size_t ldb = transposeB ? n : k;
-			const size_t ldc = m;
+			const int lda = transposeA ? k : m;
+			const int ldb = transposeB ? n : k;
+			const int ldc = m;
 
 			double alpha = 1.0;
 			double beta = 0.0;
@@ -130,7 +130,7 @@ namespace obc {
 			CUDA_CHECK(cudaFree(d_C));
 		}
 
-		__global__ void VecVecAddKernel(const double* A, const double* B, double* C, size_t N) {
+		__global__ void VecVecAddKernel(const double* A, const double* B, double* C, int N) {
 			// Get our global thread ID
 			int id = blockIdx.x * blockDim.x + threadIdx.x;
 
@@ -140,8 +140,8 @@ namespace obc {
 		}
 
 		void VecVecAdd(const std::vector<double>& A, const std::vector<double>& B, std::vector<double>& C) {
-			const size_t N = A.size();
-			const size_t size = N * sizeof(double);
+			const int N = A.size();
+			const int size = N * sizeof(double);
 
 			double* d_A = nullptr;
 			double* d_B = nullptr;
@@ -154,8 +154,8 @@ namespace obc {
 			CUDA_CHECK(cudaMemcpy(d_A, A.data(), size, cudaMemcpyHostToDevice));
 			CUDA_CHECK(cudaMemcpy(d_B, B.data(), size, cudaMemcpyHostToDevice));
 
-			const size_t threads_per_block = 256;
-			const size_t num_blocks = (N + threads_per_block - 1) / threads_per_block;
+			const int threads_per_block = 256;
+			const int num_blocks = (N + threads_per_block - 1) / threads_per_block;
 
 			VecVecAddKernel<<<num_blocks, threads_per_block>>>(d_A, d_B, d_C, N);
 			cudaDeviceSynchronize();
@@ -167,7 +167,7 @@ namespace obc {
 			CUDA_CHECK(cudaFree(d_C));
 		}
 
-		__global__ void VecScalarAddKernel(const double* A, double scalar, double* y, size_t N) {
+		__global__ void VecScalarAddKernel(const double* A, double scalar, double* y, int N) {
 			// Get our global thread ID
 			int id = blockIdx.x * blockDim.x + threadIdx.x;
 
@@ -178,8 +178,8 @@ namespace obc {
 		}
 
 		void MatrixMatrixAdd(const std::vector<double>& A, double scalar, std::vector<double>& y) {
-			const size_t N = A.size();
-			const size_t size = N * sizeof(double);
+			const int N = A.size();
+			const int size = N * sizeof(double);
 
 			double* d_A = nullptr;
 			double* d_y = nullptr;
@@ -190,8 +190,8 @@ namespace obc {
 			CUDA_CHECK(cudaMemcpy(d_A, A.data(), size, cudaMemcpyHostToDevice));
 			CUDA_CHECK(cudaMemcpy(d_y, y.data(), size, cudaMemcpyHostToDevice));
 
-			const size_t threads_per_block = 256;
-			const size_t num_blocks = (N + threads_per_block - 1) / threads_per_block;
+			const int threads_per_block = 256;
+			const int num_blocks = (N + threads_per_block - 1) / threads_per_block;
 
 			VecScalarAddKernel<<<num_blocks, threads_per_block>>>(d_A, scalar, d_y, N);
 			cudaDeviceSynchronize();
@@ -202,7 +202,7 @@ namespace obc {
 			CUDA_CHECK(cudaFree(d_y));
 		}
 
-		__global__ void VecVecElementwiseMulKernel(const double* A, const double* B, double* C, size_t N) {
+		__global__ void VecVecElementwiseMulKernel(const double* A, const double* B, double* C, int N) {
 			// Get our global thread ID
 			int id = blockIdx.x * blockDim.x + threadIdx.x;
 
@@ -213,8 +213,8 @@ namespace obc {
 		}
 
 		void VecVecElementwiseMul(const std::vector<double>& A, const std::vector<double>& B, std::vector<double>& C) {
-			const size_t N = A.size();
-			const size_t size = N * sizeof(double);
+			const int N = A.size();
+			const int size = N * sizeof(double);
 
 			double* d_A = nullptr;
 			double* d_B = nullptr;
@@ -227,8 +227,8 @@ namespace obc {
 			CUDA_CHECK(cudaMemcpy(d_A, A.data(), size, cudaMemcpyHostToDevice));
 			CUDA_CHECK(cudaMemcpy(d_B, B.data(), size, cudaMemcpyHostToDevice));
 
-			const size_t threads_per_block = 256;
-			const size_t num_blocks = (N + threads_per_block - 1) / threads_per_block;
+			const int threads_per_block = 256;
+			const int num_blocks = (N + threads_per_block - 1) / threads_per_block;
 
 			VecVecElementwiseMulKernel<<<num_blocks, threads_per_block>>>(d_A, d_B, d_C, N);
 			cudaDeviceSynchronize();
@@ -249,8 +249,8 @@ namespace obc {
 
 			int c_index = j * c_width + i;
 
-			for (size_t x = 0; x < b_width; x++) {
-				for (size_t y = 0; y < b_height; y++) {
+			for (int x = 0; x < b_width; x++) {
+				for (int y = 0; y < b_height; y++) {
 					int a_index = (j + y) * a_width + (i + x);
 					int b_index = y * b_width + x;
 					if (rot180)	
@@ -304,11 +304,11 @@ namespace obc {
 			double* d_B = nullptr;
 			double* d_C = nullptr;
 
-			const size_t a_size = sizeof(double) * (a_height * a_width);
+			const int a_size = sizeof(double) * (a_height * a_width);
 			CUDA_CHECK(cudaMalloc(reinterpret_cast<void**>(&d_A), a_size));
-			const size_t b_size = sizeof(double) * (b_height * b_width);
+			const int b_size = sizeof(double) * (b_height * b_width);
 			CUDA_CHECK(cudaMalloc(reinterpret_cast<void**>(&d_B), b_size));
-			const size_t c_size = sizeof(double) * (c_height * c_width);
+			const int c_size = sizeof(double) * (c_height * c_width);
 			CUDA_CHECK(cudaMalloc(reinterpret_cast<void**>(&d_C), c_size));
 		
 			CUDA_CHECK(cudaMemcpy(d_A, A.data() + a_offset, a_size, cudaMemcpyHostToDevice));
@@ -361,7 +361,7 @@ namespace obc {
 			return x > 0 ? 1 : 0;
 		}
 		template <FunctionType func>
-		__global__ void ApplyFuncKernel(double* A, size_t N) {
+		__global__ void ApplyFuncKernel(double* A, int N) {
 			// Get our global thread ID
 			int id = blockIdx.x * blockDim.x + threadIdx.x;
 
@@ -383,8 +383,8 @@ namespace obc {
 		}
 		template <FunctionType func>
 		void ApplyFunc(std::vector<double>& A) {
-			const size_t N = A.size();
-			const size_t size = N * sizeof(double);
+			const int N = A.size();
+			const int size = N * sizeof(double);
 
 			double* d_A = nullptr;
 
@@ -392,8 +392,8 @@ namespace obc {
 
 			CUDA_CHECK(cudaMemcpy(d_A, A.data(), size, cudaMemcpyHostToDevice));
 
-			const size_t threads_per_block = 256;
-			const size_t num_blocks = (N + threads_per_block - 1) / threads_per_block;
+			const int threads_per_block = 256;
+			const int num_blocks = (N + threads_per_block - 1) / threads_per_block;
 
 			ApplyFuncKernel<func><<<num_blocks, threads_per_block>>>(d_A, N);
 			cudaDeviceSynchronize();
@@ -403,7 +403,7 @@ namespace obc {
 			CUDA_CHECK(cudaFree(d_A));
 		}
 		template <FunctionType func>
-		__global__ void ApplyFuncKernel(const double* A, double* y, size_t N) {
+		__global__ void ApplyFuncKernel(const double* A, double* y, int N) {
 			// Get our global thread ID
 			int id = blockIdx.x * blockDim.x + threadIdx.x;
 
@@ -425,8 +425,8 @@ namespace obc {
 		}
 		template <FunctionType func>
 		void ApplyFunc(const std::vector<double>& A, std::vector<double>& y) {
-			const size_t N = A.size();
-			const size_t size = N * sizeof(double);
+			const int N = A.size();
+			const int size = N * sizeof(double);
 
 			double* d_A = nullptr;
 			double* d_y = nullptr;
@@ -436,8 +436,8 @@ namespace obc {
 
 			CUDA_CHECK(cudaMemcpy(d_A, A.data(), size, cudaMemcpyHostToDevice));
 
-			const size_t threads_per_block = 256;
-			const size_t num_blocks = (N + threads_per_block - 1) / threads_per_block;
+			const int threads_per_block = 256;
+			const int num_blocks = (N + threads_per_block - 1) / threads_per_block;
 
 			ApplyFuncKernel<func><<<num_blocks, threads_per_block>>>(d_A, d_y, N);
 			cudaDeviceSynchronize();

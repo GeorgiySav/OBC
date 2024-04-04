@@ -4,7 +4,7 @@ namespace obc {
 
 	void Network::Train(
 		const std::vector<std::vector<double>>& X, const std::vector<std::vector<double>>& Y,
-		size_t epochs, double learning_rate, ErrorFunction error) {
+		int epochs, double learning_rate, ErrorFunction error) {
 
 		// set the error functions
 		double (*error_function)(const std::vector<double>&, const std::vector<double>&) = nullptr;

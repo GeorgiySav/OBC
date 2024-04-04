@@ -11,7 +11,7 @@ namespace obc {
 	// Parent Class for all layers
 	class Layer {
 	public:
-		Layer(size_t output_size) 
+		Layer(int output_size) 
 			: input_(nullptr), output_(output_size) {}
 		~Layer() {}
 
