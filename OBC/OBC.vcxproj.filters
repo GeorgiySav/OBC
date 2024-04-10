@@ -39,6 +39,12 @@
     <ClCompile Include="src\obc\ActivationLayer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\obc\example models\MNIST\TrainMnist.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\obc\example models\MNIST\MnistDataHandler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\crow_all.h">
@@ -338,10 +344,20 @@
     <ClInclude Include="src\obc\example models\TestConvoModel.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\obc\example models\MNIST\TrainMNIST.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\obc\example models\MNIST\MnistDataHandler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="vcpkg.json" />
     <None Include="include\cereal\external\rapidxml\manual.html" />
+    <None Include="src\obc\example models\MNIST\t10k-images.idx3-ubyte" />
+    <None Include="src\obc\example models\MNIST\t10k-labels.idx1-ubyte" />
+    <None Include="src\obc\example models\MNIST\train-images.idx3-ubyte" />
+    <None Include="src\obc\example models\MNIST\train-labels.idx1-ubyte" />
   </ItemGroup>
   <ItemGroup>
     <CudaCompile Include="src\obc\cuda utilities\cuda_ops.cu" />

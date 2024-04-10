@@ -163,9 +163,11 @@
     <ClCompile Include="src\main.cpp" />
     <CudaCompile Include="src\obc\cuda utilities\cuda_ops.cu" />
     <ClCompile Include="src\obc\ConvolutionalLayer.cpp" />
+    <ClCompile Include="src\obc\example models\MNIST\MnistDataHandler.cpp" />
     <ClCompile Include="src\obc\DenseLayer.cpp" />
     <ClCompile Include="src\obc\example models\SerializationExample.cpp" />
     <ClCompile Include="src\obc\example models\TestConvoModel.cpp" />
+    <ClCompile Include="src\obc\example models\MNIST\TrainMnist.cpp" />
     <ClCompile Include="src\obc\example models\Xor.cpp" />
     <ClCompile Include="src\obc\Network.cpp" />
   </ItemGroup>
@@ -261,10 +263,12 @@
     <ClInclude Include="src\obc\ConvolutionalLayer.h" />
     <ClInclude Include="src\obc\cuda utilities\cublas_utils.h" />
     <ClInclude Include="src\obc\cuda utilities\cuda_ops.h" />
+    <ClInclude Include="src\obc\example models\MNIST\MnistDataHandler.h" />
     <ClInclude Include="src\obc\DenseLayer.h" />
     <ClInclude Include="src\obc\Error.h" />
     <ClInclude Include="src\obc\example models\SerializationExample.h" />
     <ClInclude Include="src\obc\example models\TestConvoModel.h" />
+    <ClInclude Include="src\obc\example models\MNIST\TrainMNIST.h" />
     <ClInclude Include="src\obc\example models\Xor.h" />
     <ClInclude Include="src\obc\Layer.h" />
     <ClInclude Include="src\obc\Network.h" />
@@ -272,6 +276,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="include\cereal\external\rapidxml\manual.html" />
+    <None Include="src\obc\example models\MNIST\t10k-images.idx3-ubyte" />
+    <None Include="src\obc\example models\MNIST\t10k-labels.idx1-ubyte" />
+    <None Include="src\obc\example models\MNIST\train-images.idx3-ubyte" />
+    <None Include="src\obc\example models\MNIST\train-labels.idx1-ubyte" />
     <None Include="vcpkg.json" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

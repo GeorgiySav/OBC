@@ -12,6 +12,8 @@
 
 #include "obc/example models/TestConvoModel.h"
 
+#include "obc/example models/MNIST/MnistDataHandler.h"
+
 int main() {
 
 	obc::cuda::Init();
@@ -20,7 +22,13 @@ int main() {
 
 	//obc::SerializationExample();
 
-	obc::TestConvoModel();
+	//obc::TestConvoModel();
+
+	obc::MnistDataHandler dh;
+	dh.LoadFeatureVector("./src/obc/data handling/train-images.idx3-ubyte");
+	dh.LoadFeatureLabels("./src/obc/data handling/train-labels.idx1-ubyte");
+	dh.SplitData();
+	dh.CountClasses();
 
 	obc::cuda::Shutdown();
 

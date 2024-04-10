@@ -225,11 +225,6 @@ namespace obc {
 		CUDA_CHECK(cudaFree(d_biases));
 
 		return input_gradients;
-	}
-
-	const ser::LayerData ConvolutionalLayer::Serialize() const
-	{
-		return ser::LayerData();
-	}
+	}	
 
 }
