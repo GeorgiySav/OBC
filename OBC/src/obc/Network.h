@@ -100,8 +100,20 @@ namespace obc {
 				switch (data[i].type) {
 				case ser::LayerType::kDense: {
 					DenseLayer* new_layer = new DenseLayer(data[i].input_size, data[i].output_size);
-					new_layer->SetWeights(data[i].hyper_parameters.at("weights"));
-					new_layer->SetBiases(data[i].hyper_parameters.at("biases"));
+					new_layer->SetWeights(data[i].trainable_parameters.at("weights"));
+					new_layer->SetBiases(data[i].trainable_parameters.at("biases"));
+					layers_.push_back(std::unique_ptr<Layer>(new_layer));
+				}
+					break;
+				case ser::LayerType::kConvolutional: {
+					ConvolutionalLayer* new_layer = new ConvolutionalLayer(
+						data[i].set_parameters.at("input_depth"),
+						data[i].set_parameters.at("input_width"),
+						data[i].set_parameters.at("input_height"),
+						data[i].set_parameters.at("kernel_size"),
+						data[i].set_parameters.at("output_depth"));
+					new_layer->setKernels(data[i].trainable_parameters.at("kernels"));
+					new_layer->setBiases(data[i].trainable_parameters.at("biases"));
 					layers_.push_back(std::unique_ptr<Layer>(new_layer));
 				}
 					break;
@@ -110,6 +122,9 @@ namespace obc {
 					break;
 				case ser::LayerType::kReLU:
 					layers_.push_back(std::make_unique<ReLU>(data[i].output_size));
+					break;
+				case ser::LayerType::kSoftmax:
+					layers_.push_back(std::make_unique<Softmax>(data[i].output_size));
 					break;
 				default:
 					throw std::runtime_error("Unknown layer type");

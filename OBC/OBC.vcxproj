@@ -82,12 +82,16 @@
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)/OBC/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <OpenMPSupport>true</OpenMPSupport>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>%(AdditionalDependencies);cudart.lib;cudadevrt.lib; cublas.lib</AdditionalDependencies>
     </Link>
+    <CudaCompile>
+      <Optimization>InheritFromHost</Optimization>
+    </CudaCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -99,6 +103,7 @@
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)/OBC/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <OpenMPSupport>true</OpenMPSupport>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -107,6 +112,9 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>%(AdditionalDependencies);cudart.lib;cudadevrt.lib; cublas.lib</AdditionalDependencies>
     </Link>
+    <CudaCompile>
+      <Optimization>InheritFromHost</Optimization>
+    </CudaCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -116,12 +124,16 @@
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)/OBC/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <OpenMPSupport>true</OpenMPSupport>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>%(AdditionalDependencies);cudart.lib;cudadevrt.lib; cublas.lib</AdditionalDependencies>
     </Link>
+    <CudaCompile>
+      <Optimization>InheritFromHost</Optimization>
+    </CudaCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -133,6 +145,7 @@
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)/OBC/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <OpenMPSupport>true</OpenMPSupport>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -141,13 +154,18 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>%(AdditionalDependencies);cudart.lib;cudadevrt.lib; cublas.lib</AdditionalDependencies>
     </Link>
+    <CudaCompile>
+      <Optimization>InheritFromHost</Optimization>
+    </CudaCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\obc\ActivationLayer.cpp" />
     <ClCompile Include="src\main.cpp" />
     <CudaCompile Include="src\obc\cuda utilities\cuda_ops.cu" />
     <ClCompile Include="src\obc\ConvolutionalLayer.cpp" />
     <ClCompile Include="src\obc\DenseLayer.cpp" />
     <ClCompile Include="src\obc\example models\SerializationExample.cpp" />
+    <ClCompile Include="src\obc\example models\TestConvoModel.cpp" />
     <ClCompile Include="src\obc\example models\Xor.cpp" />
     <ClCompile Include="src\obc\Network.cpp" />
   </ItemGroup>
@@ -246,6 +264,7 @@
     <ClInclude Include="src\obc\DenseLayer.h" />
     <ClInclude Include="src\obc\Error.h" />
     <ClInclude Include="src\obc\example models\SerializationExample.h" />
+    <ClInclude Include="src\obc\example models\TestConvoModel.h" />
     <ClInclude Include="src\obc\example models\Xor.h" />
     <ClInclude Include="src\obc\Layer.h" />
     <ClInclude Include="src\obc\Network.h" />

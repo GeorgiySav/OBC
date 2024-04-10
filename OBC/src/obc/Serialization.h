@@ -18,8 +18,10 @@ namespace obc {
 
 		enum class LayerType {
 			kDense,
+			kConvolutional,
 			kSigmoid,
 			kReLU,
+			kSoftmax,
 		};
 
 		struct LayerData {
@@ -27,7 +29,8 @@ namespace obc {
 			int input_size;
 			int output_size;
 
-			std::map<std::string, std::vector<double>> hyper_parameters;
+			std::map<std::string, int> set_parameters;
+			std::map<std::string, std::vector<double>> trainable_parameters;
 
 			template<class Archive>
 			void serialize(Archive& archive) {
@@ -35,7 +38,8 @@ namespace obc {
 					CEREAL_NVP(type), 
 					CEREAL_NVP(input_size),
 					CEREAL_NVP(output_size),
-					CEREAL_NVP(hyper_parameters));
+					CEREAL_NVP(set_parameters),
+					CEREAL_NVP(trainable_parameters));
 			}
 		};
 	}

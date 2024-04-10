@@ -44,8 +44,8 @@ namespace obc {
 			data.type = ser::LayerType::kDense;
 			data.input_size = weights_.size() / biases_.size();
 			data.output_size = biases_.size();
-			data.hyper_parameters["weights"] = weights_;
-			data.hyper_parameters["biases"] = biases_;
+			data.trainable_parameters["weights"] = weights_;
+			data.trainable_parameters["biases"] = biases_;
 			return data;
 		}
 

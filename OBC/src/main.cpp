@@ -10,45 +10,17 @@
 
 #include "obc/example models/SerializationExample.h"
 
+#include "obc/example models/TestConvoModel.h"
+
 int main() {
 
 	obc::cuda::Init();
 
-	// obc::XorModel();
+	//obc::XorModel();
 
 	//obc::SerializationExample();
 
-	std::vector<double> A = {
-		1, 6, 2,
-		5, 3, 1,
-		7, 0, 4
-	};
-	std::vector<double> B = {
-		1, 2,
-		-1, 0
-	};
-	std::vector<double> C = {
-		0, 0,
-		0, 0
-	};
-
-	obc::cuda::CrossCorrelate(
-		A, 0, 3, 3,
-		B, 0, 2, 2, true,
-		C, 0, 2, 2,
-		false
-	);
-	std::cout;
-	
-
-/*
-0 1
-2 3
-
-
-
-*/
-
+	obc::TestConvoModel();
 
 	obc::cuda::Shutdown();
 

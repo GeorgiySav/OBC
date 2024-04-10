@@ -40,16 +40,6 @@
 #include <cuda_runtime_api.h>
 #include <library_types.h>
 
- // CUDA API error checking
-#define CUDA_CHECK(err)                                                                            \
-    do {                                                                                           \
-        cudaError_t err_ = (err);                                                                  \
-        if (err_ != cudaSuccess) {                                                                 \
-            std::printf("CUDA error %d at %s:%d\n", err_, __FILE__, __LINE__);                     \
-            throw std::runtime_error("CUDA error");                                                \
-        }                                                                                          \
-    } while (0)
-
 // cublas API error checking
 #define CUBLAS_CHECK(err)                                                                          \
     do {                                                                                           \

@@ -21,7 +21,7 @@ namespace obc {
 		auto start = std::chrono::high_resolution_clock::now();
 
 		// Train the model
-		cpu_xor_model.Train(inputs, outputs, 10000, 0.1, ErrorFunction::MSE);
+		//cpu_xor_model.Train(inputs, outputs, 10000, 0.1, ErrorFunction::MSE);
 		
 		auto end = std::chrono::high_resolution_clock::now();
 
@@ -40,9 +40,9 @@ namespace obc {
 			new DenseLayer(2, 3),
 			new Sigmoid(3),
 			new DenseLayer(3, 1),
-			new Sigmoid(1)
+			new Softmax(1)
 		};
-		gpu_xor_model.setGpuEnabled(true);
+		//gpu_xor_model.setGpuEnabled(true);
 		std::cout << "GPU Model" << std::endl;
 		std::cout << "Xor Model created" << std::endl;
 

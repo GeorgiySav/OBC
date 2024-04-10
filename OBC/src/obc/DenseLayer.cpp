@@ -13,8 +13,31 @@ namespace obc {
 	}
 	const std::vector<double>* DenseLayer::ForwardGpu(const std::vector<double>* input) {
 		input_ = input;
-		cuda::MatrixVecMul(weights_, output_.size(), input_->size(), false, *input_, output_);
-		cuda::VecVecAdd(output_, biases_, output_);
+
+		double* d_input = nullptr;
+		double* d_output = nullptr;
+		double* d_weights = nullptr;
+		double* d_biases = nullptr;
+
+		CUDA_CHECK(cudaMalloc(reinterpret_cast<void**>(&d_input), input_->size() * sizeof(double)));
+		CUDA_CHECK(cudaMalloc(reinterpret_cast<void**>(&d_output), output_.size() * sizeof(double)));
+		CUDA_CHECK(cudaMalloc(reinterpret_cast<void**>(&d_weights), weights_.size() * sizeof(double)));
+		CUDA_CHECK(cudaMalloc(reinterpret_cast<void**>(&d_biases), biases_.size() * sizeof(double)));
+
+		CUDA_CHECK(cudaMemcpy(d_input, input_->data(), input_->size() * sizeof(double), cudaMemcpyHostToDevice));
+		CUDA_CHECK(cudaMemcpy(d_weights, weights_.data(), weights_.size() * sizeof(double), cudaMemcpyHostToDevice));
+		CUDA_CHECK(cudaMemcpy(d_biases, biases_.data(), biases_.size() * sizeof(double), cudaMemcpyHostToDevice));
+
+		cuda::MatrixVecMul(d_weights, output_.size(), input_->size(), false, d_input, d_output);
+		cuda::VecVecAdd(d_output, d_biases, d_output, output_.size());
+
+		CUDA_CHECK(cudaMemcpy(output_.data(), d_output, output_.size() * sizeof(double), cudaMemcpyDeviceToHost));
+
+		CUDA_CHECK(cudaFree(d_input));
+		CUDA_CHECK(cudaFree(d_output));
+		CUDA_CHECK(cudaFree(d_weights));
+		CUDA_CHECK(cudaFree(d_biases));
+
 		return &output_;
 	}
 
@@ -50,21 +73,50 @@ namespace obc {
 		return input_gradients;
 	}
 	const std::vector<double> DenseLayer::BackwardGpu(const std::vector<double> output_gradients, double learning_rate) {
-		//return Backward(output_gradients, learning_rate);
+		double* d_output_gradients = nullptr;
+		double* d_input = nullptr;
+		double* d_weights = nullptr;
+		double* d_biases = nullptr;
+		double* d_weights_gradients = nullptr;
+		double* d_input_gradients = nullptr;
+		std::vector<double> input_gradients(input_->size(), 0);
+
+		CUDA_CHECK(cudaMalloc(reinterpret_cast<void**>(&d_output_gradients), output_gradients.size() * sizeof(double)));
+		CUDA_CHECK(cudaMalloc(reinterpret_cast<void**>(&d_input), input_->size() * sizeof(double)));
+		CUDA_CHECK(cudaMalloc(reinterpret_cast<void**>(&d_weights), weights_.size() * sizeof(double)));
+		CUDA_CHECK(cudaMalloc(reinterpret_cast<void**>(&d_biases), biases_.size() * sizeof(double)));
+		CUDA_CHECK(cudaMalloc(reinterpret_cast<void**>(&d_weights_gradients), weights_.size() * sizeof(double)));
+		CUDA_CHECK(cudaMalloc(reinterpret_cast<void**>(&d_input_gradients), input_->size() * sizeof(double)));
+
+		CUDA_CHECK(cudaMemcpy(d_output_gradients, output_gradients.data(), output_gradients.size() * sizeof(double), cudaMemcpyHostToDevice));
+		CUDA_CHECK(cudaMemcpy(d_input, input_->data(), input_->size() * sizeof(double), cudaMemcpyHostToDevice));
+		CUDA_CHECK(cudaMemcpy(d_weights, weights_.data(), weights_.size() * sizeof(double), cudaMemcpyHostToDevice));
+		CUDA_CHECK(cudaMemcpy(d_biases, biases_.data(), biases_.size() * sizeof(double), cudaMemcpyHostToDevice));
+
 		// dE/dW = dE/dY * transpose(X)
-		std::vector<double> weights_gradients(weights_.size(), 0);
-		cuda::MatrixMatrixMul(output_gradients.size(), 1, input_->size(), output_gradients, false, *input_, false, weights_gradients);
+		cuda::MatrixMatrixMul(
+			output_gradients.size(), 1, input_->size(), d_output_gradients, false, d_input, false, d_weights_gradients);
 
 		// dE/dX = transpose(W) * dE/dY
-		std::vector<double> input_gradients(input_->size(), 0);
-		cuda::MatrixVecMul(weights_, input_->size(), output_.size(), false, output_gradients, input_gradients);
+		cuda::MatrixVecMul(d_weights, input_->size(), output_.size(), false, d_output_gradients, d_input_gradients);
 
 		// update weights
-		cuda::MatrixMatrixAdd(weights_gradients, -learning_rate, weights_);
+		cuda::ScalarAdd(d_weights_gradients, -learning_rate, d_weights, weights_.size());
 
 		// dE/dB = dE/dY
 		// update biases
-		cuda::MatrixMatrixAdd(output_gradients, -learning_rate, biases_);
+		cuda::ScalarAdd(d_output_gradients, -learning_rate, d_biases, biases_.size());
+
+		CUDA_CHECK(cudaMemcpy(input_gradients.data(), d_input_gradients, input_->size() * sizeof(double), cudaMemcpyDeviceToHost));
+		CUDA_CHECK(cudaMemcpy(weights_.data(), d_weights, weights_.size() * sizeof(double), cudaMemcpyDeviceToHost));
+		CUDA_CHECK(cudaMemcpy(biases_.data(), d_biases, biases_.size() * sizeof(double), cudaMemcpyDeviceToHost));
+
+		CUDA_CHECK(cudaFree(d_output_gradients));
+		CUDA_CHECK(cudaFree(d_input));
+		CUDA_CHECK(cudaFree(d_weights));
+		CUDA_CHECK(cudaFree(d_biases));
+		CUDA_CHECK(cudaFree(d_weights_gradients));
+		CUDA_CHECK(cudaFree(d_input_gradients));
 
 		return input_gradients;
 	}

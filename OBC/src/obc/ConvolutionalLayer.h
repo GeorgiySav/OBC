@@ -9,11 +9,11 @@ namespace obc {
 
 	extern void CrossCorrelate(
 		const std::vector<double>& A, int a_offset, int a_height, int a_width,
-		const std::vector<double>& B, int b_offset, int b_height, int b_width,
+		const std::vector<double>& B, int b_offset, int b_height, int b_width, bool rot180,
 		std::vector<double>& C, int c_offset, int c_height, int c_width);
 	extern void FullCrossCorrelate(
 		const std::vector<double>& A, int a_offset, int a_height, int a_width,
-		const std::vector<double>& B, int b_offset, int b_height, int b_width,
+		const std::vector<double>& B, int b_offset, int b_height, int b_width, bool rot180,
 		std::vector<double>& C, int c_offset, int c_height, int c_width);
 
 	class ConvolutionalLayer : public Layer {
@@ -54,8 +54,33 @@ namespace obc {
 
 		const std::vector<double> Backward(const std::vector<double> output_gradients, double learning_rate) override;
 		const std::vector<double> BackwardGpu(const std::vector<double> output_gradients, double learning_rate) override;
-	
-		const ser::LayerData Serialize() const override;
+
+		void setKernels(const std::vector<double>& kernels) {
+			kernels_ = kernels;
+		}
+		void setBiases(const std::vector<double>& biases) {
+			biases_ = biases;
+		}
+
+		const ser::LayerData Serialize() const override {
+			ser::LayerData data;
+			data.type = ser::LayerType::kConvolutional;
+
+			data.input_size = input_depth_ * input_width_ * input_height_;
+			data.output_size = output_.size();
+
+			data.set_parameters["input_depth"] = { input_depth_ };
+			data.set_parameters["input_width"] = { input_width_ };
+			data.set_parameters["input_height"] = { input_height_ };
+
+			data.set_parameters["kernel_size"] = { kernel_size_ };
+
+			data.set_parameters["output_depth"] = { output_depth_ };
+
+			data.trainable_parameters["kernels"] = kernels_;
+			data.trainable_parameters["biases"] = biases_;
+			return data;
+		}
 
 //	private:
 		int input_depth_;
