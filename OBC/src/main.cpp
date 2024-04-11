@@ -25,10 +25,9 @@ int main() {
 	//obc::TestConvoModel();
 
 	obc::MnistDataHandler dh;
-	dh.LoadFeatureVector("./src/obc/data handling/train-images.idx3-ubyte");
-	dh.LoadFeatureLabels("./src/obc/data handling/train-labels.idx1-ubyte");
+	dh.LoadFeatureVector("./src/obc/example models/MNIST/train-images.idx3-ubyte");
+	dh.LoadFeatureLabels("./src/obc/example models/MNIST/train-labels.idx1-ubyte");
 	dh.SplitData();
-	dh.CountClasses();
 
 	obc::cuda::Shutdown();
 

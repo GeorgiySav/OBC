@@ -22,6 +22,7 @@ namespace obc {
 			kMaxPooling,
 			kSigmoid,
 			kReLU,
+			kTanh,
 			kSoftmax,
 		};
 

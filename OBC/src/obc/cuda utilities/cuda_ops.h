@@ -71,6 +71,8 @@ namespace obc {
 			kSigmoidPrime,
 			kReLu,
 			kReLuPrime,
+			kTanh,
+			kTanhPrime
 		};
 		template <FunctionType func>
 		void ApplyFunc(double* A, int N);

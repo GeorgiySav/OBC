@@ -55,6 +55,33 @@ namespace obc {
 		}
 	};
 
+	class Tanh : public ActivationLayer {
+	public:
+		Tanh(int output_size)
+			: ActivationLayer(output_size, 
+								Tanh::tanh, 
+								static_cast<void(*)(const std::vector<double>&, std::vector<double>&)>(cuda::ApplyFunc<cuda::FunctionType::kTanh>),
+								Tanh::tanhPrime,
+								static_cast<void(*)(const double*, double*, int)>(cuda::ApplyFunc<cuda::FunctionType::kTanhPrime>)) {}
+		~Tanh() {}
+
+		const ser::LayerData Serialize() const override {
+			ser::LayerData data;
+			data.type = ser::LayerType::kTanh;
+			data.input_size = output_.size();
+			data.output_size = output_.size();
+			return data;
+		}
+
+	private:
+		static double tanh(double x) {
+			return std::tanh(x);
+		}
+		static double tanhPrime(double x) {
+			return 1 - std::pow(std::tanh(x), 2);
+		}
+	};
+
 	class Softmax : public Layer {
 	public:
 		Softmax(int output_size)
