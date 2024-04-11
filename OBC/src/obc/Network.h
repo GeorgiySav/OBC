@@ -8,6 +8,7 @@
 #include "DenseLayer.h"
 #include "ActivationFunctions.h"
 #include "ConvolutionalLayer.h"
+#include "MaxPoolingLayer.h"
 #include "Error.h"
 
 namespace obc {
@@ -114,6 +115,16 @@ namespace obc {
 						data[i].set_parameters.at("output_depth"));
 					new_layer->setKernels(data[i].trainable_parameters.at("kernels"));
 					new_layer->setBiases(data[i].trainable_parameters.at("biases"));
+					layers_.push_back(std::unique_ptr<Layer>(new_layer));
+				}
+					break;
+				case ser::LayerType::kMaxPooling: {
+					MaxPoolingLayer* new_layer = new MaxPoolingLayer(
+						data[i].set_parameters.at("input_depth"),
+						data[i].set_parameters.at("input_width"),
+						data[i].set_parameters.at("input_height"),
+						data[i].set_parameters.at("filter_size"),
+						data[i].set_parameters.at("filter_stride"));
 					layers_.push_back(std::unique_ptr<Layer>(new_layer));
 				}
 					break;

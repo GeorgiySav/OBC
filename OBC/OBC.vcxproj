@@ -271,6 +271,7 @@
     <ClInclude Include="src\obc\example models\MNIST\TrainMNIST.h" />
     <ClInclude Include="src\obc\example models\Xor.h" />
     <ClInclude Include="src\obc\Layer.h" />
+    <ClInclude Include="src\obc\MaxPoolingLayer.h" />
     <ClInclude Include="src\obc\Network.h" />
     <ClInclude Include="src\obc\Serialization.h" />
   </ItemGroup>

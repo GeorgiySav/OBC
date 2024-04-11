@@ -19,6 +19,7 @@ namespace obc {
 		enum class LayerType {
 			kDense,
 			kConvolutional,
+			kMaxPooling,
 			kSigmoid,
 			kReLU,
 			kSoftmax,

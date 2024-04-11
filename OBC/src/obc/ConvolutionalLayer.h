@@ -69,13 +69,13 @@ namespace obc {
 			data.input_size = input_depth_ * input_width_ * input_height_;
 			data.output_size = output_.size();
 
-			data.set_parameters["input_depth"] = { input_depth_ };
-			data.set_parameters["input_width"] = { input_width_ };
-			data.set_parameters["input_height"] = { input_height_ };
+			data.set_parameters["input_depth"] = input_depth_;
+			data.set_parameters["input_width"] = input_width_;
+			data.set_parameters["input_height"] = input_height_;
 
-			data.set_parameters["kernel_size"] = { kernel_size_ };
+			data.set_parameters["kernel_size"] = kernel_size_;
 
-			data.set_parameters["output_depth"] = { output_depth_ };
+			data.set_parameters["output_depth"] = output_depth_;
 
 			data.trainable_parameters["kernels"] = kernels_;
 			data.trainable_parameters["biases"] = biases_;
