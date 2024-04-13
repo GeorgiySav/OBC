@@ -15,6 +15,15 @@ namespace obc {
 		return &output_;
 	}
 
+	const std::vector<std::vector<double>> ActivationLayer::Backward(std::vector<double> output_gradients) {
+		// dE/dx = dE/dy elementwise_mul f'(x)
+		std::vector<double> input_gradients(input_->size());
+		for (int i = 0; i < input_gradients.size(); i++) {
+			input_gradients[i] = output_gradients[i] * activation_derivative_(input_->at(i));
+		}
+		return { input_gradients };
+	}
+
 	const std::vector<double> ActivationLayer::Backward(const std::vector<double> output_gradients, double learning_rate) {
 		// dE/dx = dE/dy elementwise_mul f'(x)
 		std::vector<double> input_gradients(input_->size());

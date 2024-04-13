@@ -126,6 +126,21 @@ namespace obc {
 		}
 		const std::vector<double>* ForwardGpu(const std::vector<double>* input) override { return nullptr;}
 
+		const std::vector<std::vector<double>> Backward(const std::vector<double> output_gradients) override {
+			/*
+			dE/dX = (Y elementWise (I - Y)) * dE/dY
+			*/
+			std::vector<double> input_gradients(input_->size(), 0);
+			for (int i = 0; i < input_gradients.size(); i++) {
+				double sum = 0.0;
+				for (int j = 0; j < output_.size(); j++) {
+					sum += output_gradients[j] * output_.at(i) * ((i == j) ? (1 - output_[j]) : (-output_[j]));
+				}
+				input_gradients[i] = sum;
+			}
+			return { input_gradients };
+		}
+
 		const std::vector<double> Backward(const std::vector<double> output_gradients, double learning_rate) override {	
 			/*
 			dE/dX = (Y elementWise (I - Y)) * dE/dY
@@ -141,7 +156,9 @@ namespace obc {
 			return input_gradients;
 		}
 		const std::vector<double> BackwardGpu(const std::vector<double> output_gradients, double learning_rate) override { return std::vector<double>(); };
-		
+	
+		std::vector<std::vector<double>*> GetTrainableParameters() override { {}; }
+
 		const ser::LayerData Serialize() const override {
 			ser::LayerData data;
 			data.type = ser::LayerType::kSoftmax;

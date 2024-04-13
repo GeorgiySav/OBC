@@ -49,7 +49,19 @@ namespace obc {
 		std::cout << "Xor Model training..." << std::endl;
 		start = std::chrono::high_resolution_clock::now();
 
-		gpu_xor_model.Train(inputs, outputs, 10000, 0.1, ErrorFunction::kMSE);
+		TrainingParameters params;
+		/*params.learning_rate = 0.1;
+		params.epochs = 10000;
+		params.batch_size = 2;
+		params.optimization = Optimization::kSGD;*/
+		params.learning_rate = 0.01;
+		params.epochs = 10000;
+		params.batch_size = 4;
+		params.optimization = Optimization::kAdam;
+		params.beta1 =  0.9;
+		params.beta2 = 0.999;
+		params.epsilon = 1e-8;
+		gpu_xor_model.Train(inputs, outputs, params);
 
 		end = std::chrono::high_resolution_clock::now();
 

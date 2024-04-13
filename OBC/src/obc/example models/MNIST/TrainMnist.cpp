@@ -44,7 +44,7 @@ namespace obc {
 		auto start = std::chrono::high_resolution_clock::now();
 
 		std::cout << "Begin training" << std::endl;
-		network.Train(X, Y, 100, 0.1, ErrorFunction::kCrossEntropy);
+		//network.Train(X, Y, 100, 0.1, ErrorFunction::kCrossEntropy);
 
 		auto end = std::chrono::high_resolution_clock::now();
 		std::cout << "Training complete" << std::endl;

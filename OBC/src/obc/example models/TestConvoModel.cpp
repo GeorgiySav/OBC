@@ -54,7 +54,7 @@ namespace obc {
 		auto start = std::chrono::high_resolution_clock::now();
 
 		// Train the model
-		cpu_convo_model.Train(inputs, outputs, 10000, 0.1, ErrorFunction::kCrossEntropy);
+		//cpu_convo_model.Train(inputs, outputs, 10000, 0.1, ErrorFunction::kCrossEntropy);
 
 		auto end = std::chrono::high_resolution_clock::now();
 

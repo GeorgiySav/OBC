@@ -29,6 +29,14 @@ namespace obc {
 		const std::vector<double>* Forward(const std::vector<double>* input) override;
 		const std::vector<double>* ForwardGpu(const std::vector<double>* input) override;
 
+		/*
+		Output layout:
+		0 - dE/dX
+		1 - dE/dW
+		2 - dE/dB
+		*/
+		const std::vector<std::vector<double>> Backward(std::vector<double> output_gradients) override;
+
 		const std::vector<double> Backward(const std::vector<double> output_gradients, double learning_rate) override;
 		const std::vector<double> BackwardGpu(const std::vector<double> output_gradients, double learning_rate) override;
 
@@ -37,6 +45,10 @@ namespace obc {
 		}
 		void SetBiases(const std::vector<double>& biases) {
 			biases_ = biases;
+		}
+
+		std::vector<std::vector<double>*> GetTrainableParameters() override {
+			return { &weights_, &biases_ };
 		}
 
 		const ser::LayerData Serialize() const override {

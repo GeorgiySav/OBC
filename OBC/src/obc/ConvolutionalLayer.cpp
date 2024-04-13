@@ -128,6 +128,33 @@ namespace obc {
 		return &output_;
 	}
 
+	const std::vector<std::vector<double>> ConvolutionalLayer::Backward(std::vector<double> output_gradients) {
+		// dE/dK_ij = X_j cross correlate dE/dY_i
+		// dE/dB_i = dE/dY_I
+		// dE/dX_j = sum(dE/dY_i full correlate K_ij)
+
+		std::vector<double> kernel_gradients(kernel_size_ * kernel_size_ * kernel_depth_ * kernel_sets_, 0.0);
+		std::vector<double> input_gradients(input_width_ * input_height_ * kernel_depth_, 0.0);
+
+		for (int s = 0; s < kernel_sets_; s++) {
+			for (int d = 0; d < kernel_depth_; d++) {
+				int kernel_offset = GetKernelOffset(s, d);
+				int output_offset = GetOutputOffset(d);
+				int input_offset = d * input_width_ * input_height_;
+
+				CrossCorrelate(*input_, input_offset, input_height_, input_width_,
+					output_gradients, output_offset, output_height_, output_width_, false,
+					kernel_gradients, kernel_offset, kernel_size_, kernel_size_);
+
+				FullCrossCorrelate(output_gradients, output_offset, output_height_, output_width_,
+					kernels_, kernel_offset, kernel_size_, kernel_size_, true,
+					input_gradients, input_offset, input_height_, input_width_);
+			}
+		}
+
+		return { input_gradients, kernel_gradients, output_gradients };
+	}
+
 	const std::vector<double> ConvolutionalLayer::Backward(const std::vector<double> output_gradients, double learning_rate) {
 
 		// dE/dK_ij = X_j cross correlate dE/dY_i

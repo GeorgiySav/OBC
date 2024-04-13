@@ -18,13 +18,13 @@ int main() {
 
 	obc::cuda::Init();
 
-//	obc::XorModel();
+	obc::XorModel();
 
 	//obc::SerializationExample();
 
 	//obc::TestConvoModel();
 
-	obc::TrainMNIST();
+	//obc::TrainMNIST();
 
 	obc::cuda::Shutdown();
 

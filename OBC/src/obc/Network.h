@@ -12,6 +12,22 @@
 #include "Error.h"
 
 namespace obc {
+
+	enum class Optimization {
+		kSGD,
+		kAdam
+	};
+	struct TrainingParameters {
+		double learning_rate = 0;
+		double beta1 = 0;
+		double beta2 = 0;
+		double epsilon = 0;
+		int batch_size = 0;
+		int epochs = 0;
+		ErrorFunction error;
+		Optimization optimization;
+	};
+
 	class Network {
 	public:
 		Network() : gpu_enabled_(false) {}
@@ -42,7 +58,7 @@ namespace obc {
 
 		// gradient descent based training
 		template <typename T>
-		void Train(const std::vector<T>& X, const std::vector<T>& Y, int epochs, double learning_rate, ErrorFunction error);
+		void Train(const std::vector<T>& X, const std::vector<T>& Y, TrainingParameters t_params);
 
 		void Serialize(const std::string& file_name, ser::ArchiveType type) const {
 			std::ofstream file(file_name);
@@ -88,6 +104,18 @@ namespace obc {
 		}
 
 	private:
+		template <typename T>
+		double SGD(const std::vector<T>& X, const std::vector<T>& Y, 
+			double learning_rate, 
+			double(*error_function)(const std::vector<double>&, const std::vector<double>&),
+			std::vector<double>(*error_prime)(const std::vector<double>&, const std::vector<double>&));
+
+		template <typename T>
+		double AdamGD(const std::vector<T>& X, const std::vector<T>& Y,
+			double learning_rate, double beta1, double beta2, double epsilon,
+			double(*error_function)(const std::vector<double>&, const std::vector<double>&),
+			std::vector<double>(*error_prime)(const std::vector<double>&, const std::vector<double>&));
+
 		std::vector<ser::LayerData> GetLayerData() const {
 			std::vector<ser::LayerData> data;
 			for (const auto& layer : layers_) {
