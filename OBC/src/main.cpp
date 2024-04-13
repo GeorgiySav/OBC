@@ -12,22 +12,19 @@
 
 #include "obc/example models/TestConvoModel.h"
 
-#include "obc/example models/MNIST/MnistDataHandler.h"
+#include "obc/example models/MNIST/TrainMnist.h"
 
-int main() {
+int main() {	
 
 	obc::cuda::Init();
 
-	//obc::XorModel();
+//	obc::XorModel();
 
 	//obc::SerializationExample();
 
 	//obc::TestConvoModel();
 
-	obc::MnistDataHandler dh;
-	dh.LoadFeatureVector("./src/obc/example models/MNIST/train-images.idx3-ubyte");
-	dh.LoadFeatureLabels("./src/obc/example models/MNIST/train-labels.idx1-ubyte");
-	dh.SplitData();
+	obc::TrainMNIST();
 
 	obc::cuda::Shutdown();
 

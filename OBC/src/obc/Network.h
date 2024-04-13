@@ -41,7 +41,8 @@ namespace obc {
 		}
 
 		// gradient descent based training
-		void Train(const std::vector<std::vector<double>>& X, const std::vector<std::vector<double>>& Y, int epochs, double learning_rate, ErrorFunction error);
+		template <typename T>
+		void Train(const std::vector<T>& X, const std::vector<T>& Y, int epochs, double learning_rate, ErrorFunction error);
 
 		void Serialize(const std::string& file_name, ser::ArchiveType type) const {
 			std::ofstream file(file_name);
@@ -120,11 +121,10 @@ namespace obc {
 					break;
 				case ser::LayerType::kMaxPooling: {
 					MaxPoolingLayer* new_layer = new MaxPoolingLayer(
-						data[i].set_parameters.at("input_depth"),
+						data[i].set_parameters.at("depth"),
 						data[i].set_parameters.at("input_width"),
 						data[i].set_parameters.at("input_height"),
-						data[i].set_parameters.at("filter_size"),
-						data[i].set_parameters.at("filter_stride"));
+						data[i].set_parameters.at("filter_size"));
 					layers_.push_back(std::unique_ptr<Layer>(new_layer));
 				}
 					break;

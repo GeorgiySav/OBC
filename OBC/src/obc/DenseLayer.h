@@ -49,6 +49,10 @@ namespace obc {
 			return data;
 		}
 
+		const ser::LayerType GetType() const override {
+			return ser::LayerType::kDense;
+		}
+
 	private:	
 		double GetWeight(int input_index, int output_index) const {
 			return weights_[input_index * biases_.size() + output_index];

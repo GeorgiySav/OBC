@@ -22,6 +22,7 @@ namespace obc {
 		virtual const std::vector<double> BackwardGpu(const std::vector<double> output_gradients, double learning_rate) = 0;
 
 		virtual const ser::LayerData Serialize() const = 0;
+		virtual const ser::LayerType GetType() const = 0;
 	protected:
 		// a pointer to a vector of inputs
 		// will be retrieved from another layer

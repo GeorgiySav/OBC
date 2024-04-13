@@ -45,6 +45,9 @@
     <ClCompile Include="src\obc\example models\MNIST\MnistDataHandler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\obc\MaxPoolingLayer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\crow_all.h">

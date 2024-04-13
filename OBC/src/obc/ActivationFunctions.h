@@ -20,6 +20,10 @@ namespace obc {
 			data.output_size = output_.size();
 			return data;
 		}
+
+		const ser::LayerType GetType() const override {
+			return ser::LayerType::kSigmoid;
+		}
 	private:	
 		static double sigmoid(double x) {
 			return 1 / (1 + exp(-x));
@@ -45,6 +49,10 @@ namespace obc {
 			data.input_size = output_.size();
 			data.output_size = output_.size();
 			return data;
+		}
+
+		const ser::LayerType GetType() const override {
+			return ser::LayerType::kReLU;
 		}
 	private:	
 		static double relu(double x) {
@@ -73,6 +81,10 @@ namespace obc {
 			return data;
 		}
 
+		const ser::LayerType GetType() const override {
+			return ser::LayerType::kTanh;
+		}
+
 	private:
 		static double tanh(double x) {
 			return std::tanh(x);
@@ -93,12 +105,21 @@ namespace obc {
 
 			// y_i = exp(x_i) / sum(exp(x))
 
-			for (int i = 0; i < output_.size(); i++) {
-				double sum = 0.0;
-				for (int j = 0; j < input_->size(); j++) {
-					sum += exp(input_->at(j));
+			std::vector<double> exps(input->size());
+			double sum = 0.0;
+			double max = input_->at(0);
+			for (int i = 1; i < input->size(); i++) {
+				if (input->at(i) > max) {
+					max = input->at(i);
 				}
-				output_[i] = exp(input_->at(i)) / sum;
+			}
+			for (int i = 0; i < input->size(); i++) {
+				exps[i] = std::exp(input->at(i) - max);
+				sum += exps[i];
+			}
+
+			for (int i = 0; i < input->size(); i++) {
+				output_[i] = exps[i] / sum;
 			}
 
 			return &output_;
@@ -127,6 +148,10 @@ namespace obc {
 			data.input_size = output_.size();
 			data.output_size = output_.size();
 			return data;
+		}
+
+		const ser::LayerType GetType() const override {
+			return ser::LayerType::kSoftmax;
 		}
 	private:
 	};

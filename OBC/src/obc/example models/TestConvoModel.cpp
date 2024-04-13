@@ -54,7 +54,7 @@ namespace obc {
 		auto start = std::chrono::high_resolution_clock::now();
 
 		// Train the model
-		cpu_convo_model.Train(inputs, outputs, 10000, 0.1, ErrorFunction::MSE);
+		cpu_convo_model.Train(inputs, outputs, 10000, 0.1, ErrorFunction::kCrossEntropy);
 
 		auto end = std::chrono::high_resolution_clock::now();
 
@@ -64,8 +64,8 @@ namespace obc {
 		for (int i = 0; i < inputs.size(); i++) {
 			std::vector<double> prediction = cpu_convo_model.Predict(inputs[i]);
 			std::cout << "Input: " << inputs[i][0] << " " << inputs[i][1]
-				<< ", Output: " << prediction[0]
-				<< ", Expected Output: " << outputs[i][0] << std::endl;
+				<< ", Output: " << prediction[0] << " " << prediction[1] << " " << prediction[2] << " " << prediction[3] << "\n"
+				<< ", Expected Output: " << outputs[i][0] << " " << outputs[i][1] << " " << outputs[i][2] << " " << outputs[i][3] << " " << std::endl;
 		}
 		std::cout << std::endl;
 

@@ -406,6 +406,16 @@ namespace obc {
 		template void ApplyFunc<FunctionType::kReLuPrime>(const double* A, double* y, int N);
 		template void ApplyFunc<FunctionType::kReLuPrime>(const std::vector<double>& A, std::vector<double>& y);
 
+		template void ApplyFunc<FunctionType::kTanh>(double* A, int N);
+		template void ApplyFunc<FunctionType::kTanh>(std::vector<double>& A);
+		template void ApplyFunc<FunctionType::kTanh>(const double* A, double* y, int N);
+		template void ApplyFunc<FunctionType::kTanh>(const std::vector<double>& A, std::vector<double>& y);
+
+		template void ApplyFunc<FunctionType::kTanhPrime>(double* A, int N);
+		template void ApplyFunc<FunctionType::kTanhPrime>(std::vector<double>& A);
+		template void ApplyFunc<FunctionType::kTanhPrime>(const double* A, double* y, int N);
+		template void ApplyFunc<FunctionType::kTanhPrime>(const std::vector<double>& A, std::vector<double>& y);
+
 		__device__ double Sigmoid(double x) {
 			return 1 / (1 + exp(-x));
 		}
@@ -419,6 +429,14 @@ namespace obc {
 		__device__ double ReLuPrime(double x) {
 			return x > 0 ? 1 : 0;
 		}
+		__device__ double Tanh(double x) {
+			return tanh(x);
+		}
+		__device__ double TanhPrime(double x) {
+			double t = tanh(x);
+			return 1 - t * t;
+		}
+
 		template <FunctionType func>
 		__global__ void ApplyFuncKernel(double* A, int N) {
 			// Get our global thread ID
@@ -437,6 +455,12 @@ namespace obc {
 				}	
 				else if constexpr (func == FunctionType::kReLuPrime) {
 					A[id] = ReLuPrime(A[id]);
+				}
+				else if constexpr (func == FunctionType::kTanh) {
+					A[id] = Tanh(A[id]);
+				}
+				else if constexpr (func == FunctionType::kTanhPrime) {
+					A[id] = TanhPrime(A[id]);
 				}
 			}
 		}
@@ -484,6 +508,12 @@ namespace obc {
 				}
 				else if constexpr (func == FunctionType::kReLuPrime) {
 					y[id] = ReLuPrime(A[id]);
+				}
+				else if constexpr (func == FunctionType::kTanh) {
+					y[id] = Tanh(A[id]);
+				}
+				else if constexpr (func == FunctionType::kTanhPrime) {
+					y[id] = TanhPrime(A[id]);
 				}
 			}
 		}

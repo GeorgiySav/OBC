@@ -40,7 +40,7 @@ namespace obc {
 			new DenseLayer(2, 3),
 			new Sigmoid(3),
 			new DenseLayer(3, 1),
-			new Softmax(1)
+			new Sigmoid(1)
 		};
 		//gpu_xor_model.setGpuEnabled(true);
 		std::cout << "GPU Model" << std::endl;
@@ -49,7 +49,7 @@ namespace obc {
 		std::cout << "Xor Model training..." << std::endl;
 		start = std::chrono::high_resolution_clock::now();
 
-		gpu_xor_model.Train(inputs, outputs, 10000, 0.1, ErrorFunction::MSE);
+		gpu_xor_model.Train(inputs, outputs, 10000, 0.1, ErrorFunction::kMSE);
 
 		end = std::chrono::high_resolution_clock::now();
 

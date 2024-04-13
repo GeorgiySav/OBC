@@ -54,23 +54,34 @@ namespace obc {
 
 		uint32_t ConvertToLittleEndian(const unsigned char* bytes);
 
-		std::vector<std::shared_ptr<MnistData>>& GetTrainingData() {
+		std::vector<std::shared_ptr<MnistData>>& GetRawTrainingData() {
 			return this->training_data_;
 		}
-		std::vector<std::shared_ptr<MnistData>>& GetTestingData() {
+		std::vector<std::shared_ptr<MnistData>>& GetRawTestingData() {
 			return this->testing_data_;
 		}
-		std::vector<std::shared_ptr<MnistData>>& GetValidationData() {
+		std::vector<std::shared_ptr<MnistData>>& GetRawValidationData() {
 			return this->validation_data_;
+		}
+
+		std::tuple<std::vector<const std::vector<double>*>, std::vector<const std::vector<double>*>> GetTrainingData() {
+			std::vector<const std::vector<double>*> X;
+			std::vector<const std::vector<double>*> Y;
+
+			for (auto data : training_data_) {
+				X.push_back(&data->GetImageData());
+				std::vector<double>* y = new std::vector<double>(10, 0.0);
+				y->at(data->GetLabel()) = 1.0;
+				Y.push_back(y);
+			}
+
+			return std::make_tuple(X, Y);	
 		}
 	private:
 		std::vector<std::shared_ptr<MnistData>> raw_data_; // data pre-split
 		std::vector<std::shared_ptr<MnistData>> training_data_;
 		std::vector<std::shared_ptr<MnistData>> testing_data_;
 		std::vector<std::shared_ptr<MnistData>> validation_data_;
-
-		int num_classes_;
-		int image_data_size_;
 
 		const double kTrainingPercentage = 0.75;
 		const double kTestingPercentage = 0.2;

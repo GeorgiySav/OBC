@@ -82,7 +82,11 @@ namespace obc {
 			return data;
 		}
 
-//	private:
+		const ser::LayerType GetType() const override {
+			return ser::LayerType::kConvolutional;
+		}
+
+	private:
 		int input_depth_;
 		int input_width_;
 		int input_height_;
