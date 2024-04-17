@@ -9,24 +9,36 @@ namespace obc {
 
 		std::vector<std::vector<double>> inputs = {
 			{
-				0, 1, 0,
-				1, 1, 1,
-				0, 1, 0
+				0, 0, 1, 1, 0, 0, 
+				0, 0, 1, 1, 0, 0,
+				1, 1, 1, 1, 1, 1,
+				1, 1, 1, 1, 1, 1,
+				0, 0, 1, 1, 0, 0,
+				0, 0, 1, 1, 0, 0
 			},
 			{
-				1, 0, 1,
-				0, 1, 0,
-				1, 0, 1
+				1, 0, 0, 0, 0, 1,
+				0, 1, 0, 0, 1, 0,
+				0, 0, 1, 1, 0, 0,
+				0, 0, 1, 1, 0, 0,
+				0, 1, 0, 0, 1, 0,
+				1, 0, 0, 0, 0, 1
 			},
 			{
-				0, 0, 0,
-				0, 1, 0,
-				0, 0, 0
+				0, 0, 0, 0, 0, 0,
+				0, 1, 1, 1, 1, 0,
+				0, 1, 1, 1, 1, 0,
+				0, 1, 1, 1, 1, 0,
+				0, 1, 1, 1, 1, 0,
+				0, 0, 0, 0, 0, 0
 			},
 			{
-				1, 1, 1,
-				1, 0, 1,
-				1, 1, 1
+				1, 1, 1, 1, 1, 1,
+				1, 0, 0, 0, 0, 1,
+				1, 0, 0, 0, 0, 1,
+				1, 0, 0, 0, 0, 1,
+				1, 0, 0, 0, 0, 1,
+				1, 1, 1, 1, 1, 1
 			}
 		};
 		std::vector<std::vector<double>> outputs = {
@@ -37,15 +49,11 @@ namespace obc {
 		};
 
 		Network cpu_convo_model = {
+			new MaxPoolingLayer(1, 6, 6, 2),
 			new ConvolutionalLayer(1, 3, 3, 2, 1),
-			new ReLU(4),
-			new DenseLayer(4, 10),
-			new ReLU(10),
-			new DenseLayer(10, 4),
+			new DenseLayer(4,4),
 			new Softmax(4)
 		};
-
-		cpu_convo_model.setGpuEnabled(false);
 
 		std::cout << "CPU Model" << std::endl;
 		std::cout << "Convolutional Model created" << std::endl;
@@ -54,7 +62,11 @@ namespace obc {
 		auto start = std::chrono::high_resolution_clock::now();
 
 		// Train the model
-		//cpu_convo_model.Train(inputs, outputs, 10000, 0.1, ErrorFunction::kCrossEntropy);
+		TrainingParameters params;
+		params.learning_rate = 0.01;
+		params.epochs = 10000;
+		params.error = ErrorFunction::kCrossEntropy;
+		cpu_convo_model.Train(inputs, outputs, params, {}, {});
 
 		auto end = std::chrono::high_resolution_clock::now();
 

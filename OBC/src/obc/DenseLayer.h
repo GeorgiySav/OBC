@@ -15,15 +15,15 @@ namespace obc {
 			: Layer(output_size) {
 
 			std::random_device rnd_device;
-			std::mt19937 engine{ rnd_device() };  
-			std::uniform_real_distribution<double> dist{ 0.0, 1.0 };
+			std::mt19937 engine{ rnd_device() };
+			std::uniform_real_distribution<double> dist(-0.5, 0.5);
 
 			// initialise weights and biases with random values
 			weights_.resize(input_size * output_size);
 			std::generate(weights_.begin(), weights_.end(), [&]() { return dist(engine); });
 
-			biases_.resize(output_size);
-			std::generate(biases_.begin(), biases_.end(), [&]() { return dist(engine); });
+			biases_.resize(output_size, 0.0);
+			//std::generate(biases_.begin(), biases_.end(), [&]() { return dist(engine); });
 		}
 
 		const std::vector<double>* Forward(const std::vector<double>* input) override;

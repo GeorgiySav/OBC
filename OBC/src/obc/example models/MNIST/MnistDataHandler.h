@@ -5,6 +5,7 @@
 #include <vector>
 #include <map>
 #include <memory>
+#include <random>
 
 namespace obc {
 
@@ -68,7 +69,7 @@ namespace obc {
 			std::vector<const std::vector<double>*> X;
 			std::vector<const std::vector<double>*> Y;
 
-			for (auto data : training_data_) {
+			for (auto& data : training_data_) {
 				X.push_back(&data->GetImageData());
 				std::vector<double>* y = new std::vector<double>(10, 0.0);
 				y->at(data->GetLabel()) = 1.0;
@@ -76,6 +77,54 @@ namespace obc {
 			}
 
 			return std::make_tuple(X, Y);	
+		}
+
+		std::tuple<std::vector<const std::vector<double>*>, std::vector<int>> GetTestingData() {
+			std::vector<const std::vector<double>*> X;
+			std::vector<int> Y;
+
+			for (auto& data : testing_data_) {
+				X.push_back(&data->GetImageData());
+				Y.push_back(data->GetLabel());
+			}
+
+			return std::make_tuple(X, Y);
+		}
+
+		std::tuple<std::vector<const std::vector<double>*>, std::vector<int>> GetValidationData() {
+			std::vector<const std::vector<double>*> X;
+			std::vector<int> Y;
+
+			for (auto& data : validation_data_) {
+				X.push_back(&data->GetImageData());
+				Y.push_back(data->GetLabel());
+			}
+
+			return std::make_tuple(X, Y);
+		}
+
+		void PrintRandom(int n) {
+			std::random_device rnd_device;
+			std::mt19937 engine{ rnd_device() };
+			std::uniform_int_distribution<int> dist{ 0, (int)training_data_.size()};
+
+			for (int i = 0; i < n; i++) {
+				int index = dist(engine);
+				auto image_data = training_data_[index]->GetImageData();
+				int label = training_data_[index]->GetLabel();
+
+				for (int y = 0; y < 28; y++) {
+					for (int x = 0; x < 28; x++) {
+
+						if (image_data[y * 28 + x] == 0)
+							std::cout << ". ";
+						else
+							std::cout << "# ";
+					}
+					std::cout << "\n";
+				}
+				std::cout << "Label: " << label << "\n\n";
+			}
 		}
 	private:
 		std::vector<std::shared_ptr<MnistData>> raw_data_; // data pre-split

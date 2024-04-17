@@ -13,19 +13,10 @@
 
 namespace obc {
 
-	enum class Optimization {
-		kSGD,
-		kAdam
-	};
 	struct TrainingParameters {
 		double learning_rate = 0;
-		double beta1 = 0;
-		double beta2 = 0;
-		double epsilon = 0;
-		int batch_size = 0;
 		int epochs = 0;
 		ErrorFunction error;
-		Optimization optimization;
 	};
 
 	class Network {
@@ -58,7 +49,15 @@ namespace obc {
 
 		// gradient descent based training
 		template <typename T>
-		void Train(const std::vector<T>& X, const std::vector<T>& Y, TrainingParameters t_params);
+		void Train(
+			const std::vector<T>& X, 
+			const std::vector<T>& Y, 
+			TrainingParameters t_params,
+			const std::vector<T>& X_val,
+			const std::vector<int>& Y_val);
+
+		template <typename T>
+		double Test(const std::vector<T>& X, const std::vector<int>& labels);
 
 		void Serialize(const std::string& file_name, ser::ArchiveType type) const {
 			std::ofstream file(file_name);
@@ -104,18 +103,6 @@ namespace obc {
 		}
 
 	private:
-		template <typename T>
-		double SGD(const std::vector<T>& X, const std::vector<T>& Y, 
-			double learning_rate, 
-			double(*error_function)(const std::vector<double>&, const std::vector<double>&),
-			std::vector<double>(*error_prime)(const std::vector<double>&, const std::vector<double>&));
-
-		template <typename T>
-		double AdamGD(const std::vector<T>& X, const std::vector<T>& Y,
-			double learning_rate, double beta1, double beta2, double epsilon,
-			double(*error_function)(const std::vector<double>&, const std::vector<double>&),
-			std::vector<double>(*error_prime)(const std::vector<double>&, const std::vector<double>&));
-
 		std::vector<ser::LayerData> GetLayerData() const {
 			std::vector<ser::LayerData> data;
 			for (const auto& layer : layers_) {

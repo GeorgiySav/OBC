@@ -157,7 +157,7 @@ namespace obc {
 		}
 		const std::vector<double> BackwardGpu(const std::vector<double> output_gradients, double learning_rate) override { return std::vector<double>(); };
 	
-		std::vector<std::vector<double>*> GetTrainableParameters() override { {}; }
+		std::vector<std::vector<double>*> GetTrainableParameters() override { return {}; }
 
 		const ser::LayerData Serialize() const override {
 			ser::LayerData data;

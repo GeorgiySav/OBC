@@ -14,19 +14,19 @@
 
 #include "obc/example models/MNIST/TrainMnist.h"
 
-int main() {	
+#include <iomanip>
 
-	obc::cuda::Init();
+int main() {
 
-	obc::XorModel();
+
+	//obc::XorModel();
 
 	//obc::SerializationExample();
 
 	//obc::TestConvoModel();
 
-	//obc::TrainMNIST();
+	obc::TrainMNIST();
 
-	obc::cuda::Shutdown();
 
 	/*
 	crow::SimpleApp app;

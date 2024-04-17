@@ -44,10 +44,10 @@ namespace obc {
 	const std::vector<std::vector<double>> DenseLayer::Backward(std::vector<double> output_gradients) {
 		// dE/dW = dE/dY * transpose(X)	
 		std::vector<double> weights_gradients(weights_.size(), 0);
-		for (int j = 0; j < input_->size(); j++) {
-			for (int i = 0; i < output_gradients.size(); i++) {
-				int index = i * input_->size() + j;
-				weights_gradients[index] = output_gradients[i] * input_->at(j);
+		for (int i = 0; i < output_gradients.size(); i++) {
+			for (int j = 0; j < input_->size(); j++) {
+				int index = j * output_gradients.size() + i;
+				weights_gradients[index] += output_gradients[i] * input_->at(j);
 			}
 		}
 

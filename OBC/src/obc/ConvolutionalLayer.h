@@ -40,7 +40,7 @@ namespace obc {
 
 			std::random_device rnd_device;
 			std::mt19937 engine{ rnd_device() };
-			std::uniform_real_distribution<double> dist{ 0.0, 1.0 };
+			std::normal_distribution<double> dist{ 0.0, 1.0 };
 
 			kernels_.resize(kernel_sets_ * kernel_depth_ * kernel_size_ * kernel_size_);
 			std::generate(kernels_.begin(), kernels_.end(), [&]() { return dist(engine); });
