@@ -43,10 +43,11 @@ namespace obc {
 				int c_index = c_offset + (adj_j * c_width + adj_i);
 
 				for (int x = 0; x < b_width; x++) {
+					if (i + x < 0 || i + x >= a_width)
+						continue;
 					for (int y = 0; y < b_height; y++) {
 
-						if (i + x < 0 || j + y < 0
-							|| i + x >= a_width || j + y >= a_height)
+						if (j + y < 0 || j + y >= a_height)
 							continue;
 
 						int a_index = a_offset + ((j + y) * a_width + (i + x));
@@ -73,7 +74,7 @@ namespace obc {
 		for (int s = 0; s < kernel_sets_; s++) {
 			for (int d = 0; d < kernel_depth_; d++) {
 				int kernel_offset = GetKernelOffset(s, d);
-				int output_offset = GetOutputOffset(d);
+				int output_offset = GetOutputOffset(s);
 				int input_offset = d * input_width_ * input_height_;
 
 				CrossCorrelate(*input_, input_offset, input_height_, input_width_,
@@ -108,7 +109,7 @@ namespace obc {
 		for (int s = 0; s < kernel_sets_; s++) {
 			for (int d = 0; d < kernel_depth_; d++) {
 				int kernel_offset = GetKernelOffset(s, d);
-				int output_offset = GetOutputOffset(d);
+				int output_offset = GetOutputOffset(s);
 				int input_offset = d * input_width_ * input_height_;
 
 				cuda::CrossCorrelate(
@@ -139,7 +140,7 @@ namespace obc {
 		for (int s = 0; s < kernel_sets_; s++) {
 			for (int d = 0; d < kernel_depth_; d++) {
 				int kernel_offset = GetKernelOffset(s, d);
-				int output_offset = GetOutputOffset(d);
+				int output_offset = GetOutputOffset(s);
 				int input_offset = d * input_width_ * input_height_;
 
 				CrossCorrelate(*input_, input_offset, input_height_, input_width_,

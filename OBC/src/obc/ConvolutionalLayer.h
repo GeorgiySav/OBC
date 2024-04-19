@@ -40,13 +40,12 @@ namespace obc {
 
 			std::random_device rnd_device;
 			std::mt19937 engine{ rnd_device() };
-			std::normal_distribution<double> dist{ 0.0, 1.0 };
+			std::normal_distribution<double> dist{ 0.0, 1.0 / std::sqrt(input_depth_ * input_width_ * input_height_) };
 
 			kernels_.resize(kernel_sets_ * kernel_depth_ * kernel_size_ * kernel_size_);
 			std::generate(kernels_.begin(), kernels_.end(), [&]() { return dist(engine); });
 
-			biases_.resize(output_depth_ * output_width_ * output_height_);
-			std::generate(biases_.begin(), biases_.end(), [&]() { return dist(engine); });
+			biases_.resize(output_depth_ * output_width_ * output_height_, 0.0);
 		}
 
 		const std::vector<double>* Forward(const std::vector<double>* input) override;
@@ -115,14 +114,16 @@ namespace obc {
 		std::vector<double> biases_;
 
 		int GetKernelOffset(int set, int depth) const {
-			return (set * kernel_depth_+depth) * (kernel_size_ * kernel_size_);
+			//return (set * depth * kernel_size_ * kernel_size_) + (depth * kernel_size_ * kernel_size_);
+			// simplify
+			return (depth * kernel_size_ * kernel_size_) * (set + 1);
 		}
 		int GetKernelIndex(int x, int y) const {
 			return y * kernel_size_ + x;
 		}
 
-		int GetOutputOffset(int depth) const {
-			return depth * output_width_ * output_height_;
+		int GetOutputOffset(int set) const {
+			return set * output_width_ * output_height_;
 		}
 		int GetOutputIndex(int x, int y) const {
 			return y * output_width_ + x;

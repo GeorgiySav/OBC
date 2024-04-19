@@ -15,7 +15,7 @@ namespace obc {
 
 					for (int x = 0; x < filter_size_; x++) {
 						for (int y = 0; y < filter_size_; y++) {
-							int input_index = input_offset + ((j * filter_size_ + y) + input_width_ * (i * filter_size_ + x));
+							int input_index = input_offset + ((j * filter_size_ + y) * input_width_ + (i * filter_size_ + x));
 							if (input->at(input_index) > max_value) {
 								max_value = input->at(input_index);
 								max_index = input_index;

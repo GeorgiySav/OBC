@@ -33,12 +33,7 @@ namespace obc {
 
 	template double Network::Test(const std::vector<const std::vector<double>*>& X, const std::vector<int>& Y);	
 	template double Network::Test(const std::vector<std::vector<double>>& X, const std::vector<int>& Y);
-
-	struct TrainableParameter {
-		std::vector<double>* parameter;
-		std::vector<double> gradient;
-	};
-
+	
 	template <typename T>
 	void Network::Train(
 		const std::vector<T>& X, 
@@ -74,6 +69,14 @@ namespace obc {
 				TrainableParameter p;
 				p.parameter = param;
 				p.gradient.resize(param->size(), 0.0);
+
+				if (t_params.optimiser == Optimizer::kAdam) {
+					p.m.resize(param->size(), 0.0);
+					p.v.resize(param->size(), 0.0);
+					p.m_hat.resize(param->size(), 0.0);
+					p.v_hat.resize(param->size(), 0.0);
+				}
+
 				trainable_parameters.push_back(p);
 			}
 		}
@@ -81,6 +84,12 @@ namespace obc {
 		// Train the network
 		for (int epoch = 0; epoch < t_params.epochs; epoch++) {
 			double total_error = 0.0;
+			if (t_params.optimiser == Optimizer::kAdam) {
+				for (auto& param : trainable_parameters) {
+					std::fill(param.m.begin(), param.m.end(), 0.0);
+					std::fill(param.v.begin(), param.v.end(), 0.0);
+				}
+			}
 			for (int i = 0; i < X.size(); i++) {
 				// forward propogation
 				std::vector<double> output;
@@ -118,11 +127,11 @@ namespace obc {
 				}
 
 				// update trainable parameters
-				for (auto& param : trainable_parameters) {
-					for (int j = 0; j < param.parameter->size(); j++) {
-						param.parameter->at(j) -= t_params.learning_rate * param.gradient[j];
-					}
-				}
+				if (t_params.optimiser == Optimizer::kSGD)
+					UpdateSGD(trainable_parameters, t_params.learning_rate);
+				else if (t_params.optimiser == Optimizer::kAdam)
+					UpdateAdam(trainable_parameters,
+						t_params.learning_rate, t_params.beta1, t_params.beta2, t_params.epsilon, i);
 
 				if (i == X.size() - 1) {
 					double avg_error = total_error / i;
@@ -166,6 +175,29 @@ namespace obc {
 				num_correct++;
 		}
 		return (double)num_correct / X.size() * 100.0;
+	}
+
+	void Network::UpdateSGD(std::vector<TrainableParameter>& parameters, double learning_rate) {
+		for (auto& param : parameters) {
+			for (int i = 0; i < param.parameter->size(); i++) {
+				param.parameter->at(i) -= learning_rate * param.gradient[i];
+			}
+		}
+	}
+
+	void Network::UpdateAdam(std::vector<TrainableParameter>& parameters, 
+		double learning_rate, double beta1, double beta2, double epsilon, int t)	{
+		for (auto& param : parameters) {
+			for (int i = 0; i < param.parameter->size(); i++) {
+				param.m[i] = beta1 * param.m[i] + (1 - beta1) * param.gradient[i];
+				param.v[i] = beta2 * param.v[i] + (1 - beta2) * param.gradient[i] * param.gradient[i];
+
+				param.m_hat[i] = param.m[i] / (1 - std::pow(beta1, t + 1));
+				param.v_hat[i] = param.v[i] / (1 - std::pow(beta2, t + 1));
+
+				param.parameter->at(i) -= learning_rate * param.m_hat[i] / (std::sqrt(param.v_hat[i]) + epsilon);
+			}
+		}
 	}
 
 }

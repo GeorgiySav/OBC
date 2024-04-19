@@ -13,10 +13,20 @@
 
 namespace obc {
 
+	enum class Optimizer {
+		kSGD,
+		kAdam
+	};
+
 	struct TrainingParameters {
-		double learning_rate = 0;
-		int epochs = 0;
-		ErrorFunction error;
+		double learning_rate = 0.1;
+		int epochs = 10;
+		ErrorFunction error = ErrorFunction::kMSE;
+		Optimizer optimiser = Optimizer::kSGD;
+
+		double beta1 = 0.9;
+		double beta2 = 0.999;
+		double epsilon = 1e-8;
 	};
 
 	class Network {
@@ -60,7 +70,7 @@ namespace obc {
 		double Test(const std::vector<T>& X, const std::vector<int>& labels);
 
 		void Serialize(const std::string& file_name, ser::ArchiveType type) const {
-			std::ofstream file(file_name);
+			std::ofstream file(file_name, std::ios::binary);
 			if (!file.is_open()) {
 				throw std::runtime_error("Could not open file for writing");
 			}
@@ -80,7 +90,7 @@ namespace obc {
 			}	
 		}
 		void Deserialize(const std::string& file_name, ser::ArchiveType type) {
-			std::ifstream file(file_name);
+			std::ifstream file(file_name, std::ios::binary);
 			if (!file.is_open()) {
 				throw std::runtime_error("Could not open file for reading");
 			}
@@ -103,6 +113,19 @@ namespace obc {
 		}
 
 	private:
+		struct TrainableParameter {
+			std::vector<double>* parameter;
+			std::vector<double> gradient;
+
+			std::vector<double> m;
+			std::vector<double> v;
+			std::vector<double> m_hat;
+			std::vector<double> v_hat;
+		};
+
+		void UpdateSGD(std::vector<TrainableParameter>& parameters, double learning_rate);
+		void UpdateAdam(std::vector<TrainableParameter>& parameters, double learning_rate, double beta1, double beta2, double epsilon, int t);
+
 		std::vector<ser::LayerData> GetLayerData() const {
 			std::vector<ser::LayerData> data;
 			for (const auto& layer : layers_) {

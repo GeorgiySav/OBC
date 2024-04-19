@@ -16,7 +16,7 @@ namespace obc {
 
 			std::random_device rnd_device;
 			std::mt19937 engine{ rnd_device() };
-			std::uniform_real_distribution<double> dist(-0.5, 0.5);
+			std::normal_distribution<double> dist(0.0, 1.0/std::sqrt(input_size));
 
 			// initialise weights and biases with random values
 			weights_.resize(input_size * output_size);
