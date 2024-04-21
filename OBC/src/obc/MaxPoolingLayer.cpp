@@ -29,9 +29,6 @@ namespace obc {
 		}
 		return &output_;
 	}
-	const std::vector<double>* MaxPoolingLayer::ForwardGpu(const std::vector<double>* input) {
-		return nullptr;
-	}
 
 	const std::vector<std::vector<double>> MaxPoolingLayer::Backward(std::vector<double> output_gradients) {
 		std::vector<double> input_gradients(input_->size(), 0);
@@ -39,16 +36,5 @@ namespace obc {
 			input_gradients[max_indices_[i]] = output_gradients[i];
 		}
 		return { input_gradients };
-	}
-
-	const std::vector<double> MaxPoolingLayer::Backward(const std::vector<double> output_gradients, double learning_rate) {
-		std::vector<double> input_gradients(input_->size(), 0);
-		for (int i = 0; i < output_gradients.size(); i++) {
-			input_gradients[max_indices_[i]] = output_gradients[i];
-		}
-		return input_gradients;
-	}
-	const std::vector<double> MaxPoolingLayer::BackwardGpu(const std::vector<double> output_gradients, double learning_rate) {
-		return std::vector<double>();
 	}
 }

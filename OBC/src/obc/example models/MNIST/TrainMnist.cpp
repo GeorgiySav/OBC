@@ -43,15 +43,16 @@ namespace obc {
 			new DenseLayer(84, 10),
 			new Softmax(10)
 		};
-		network.Deserialize("mnist_model_lenet-5.obc", obc::ser::ArchiveType::Binary);
 
 		MnistDataHandler data_handler;
 		data_handler.LoadFeatureVector("./src/obc/example models/MNIST/train-images.idx3-ubyte");
 		data_handler.LoadFeatureLabels("./src/obc/example models/MNIST/train-labels.idx1-ubyte");
 
+		data_handler.CreateData(2);
+
 		data_handler.SplitData();
 
-		data_handler.PrintRandom(1);
+		data_handler.PrintRandom(50);
 
 		auto [X, Y] = data_handler.GetTrainingData();
 		auto [X_test, Y_test] = data_handler.GetTestingData();
@@ -69,21 +70,21 @@ namespace obc {
 		params.beta2 = 0.999;
 		params.epsilon = 1e-8;
 
-		params.learning_rate = 0.00001;
-		params.epochs = 3;
+		params.learning_rate = 0.0005;
+		params.epochs = 2;
 		network.Train(X, Y, params, X_val, Y_val);
 
-		params.learning_rate = 0.00002;
-		params.epochs = 3;
-		//network.Train(X, Y, params, X_val, Y_val);
-
-		params.learning_rate = 0.00001;
-		params.epochs = 3;
-		//network.Train(X, Y, params, X_val, Y_val);
-
-		params.learning_rate = 0.000005;
+		params.learning_rate = 0.0002;
 		params.epochs = 4;
-		//network.Train(X, Y, params, X_val, Y_val);
+		network.Train(X, Y, params, X_val, Y_val);
+
+		params.learning_rate = 0.0001;
+		params.epochs = 4;
+		network.Train(X, Y, params, X_val, Y_val);
+
+		params.learning_rate = 0.00005;
+		params.epochs = 5;
+		network.Train(X, Y, params, X_val, Y_val);
 
 		params.learning_rate = 0.000001;
 		params.epochs = 8;
@@ -93,15 +94,6 @@ namespace obc {
 		std::cout << "Training complete" << std::endl;
 		std::cout << "Time to train: " << std::chrono::duration<double>(end - start).count() << "s\n";
 
-		std::vector<int> Y_labels;
-		for (const auto& y : Y) {
-			int max_index = 0;
-			for (int i = 1; i < 10; i++) {
-				if (y->at(max_index) < y->at(i))
-					max_index = i;
-			}
-			Y_labels.push_back(max_index);
-		}
 		double accuracy = network.Test(X_test, Y_test);
 		std::cout << "Accuracy: " << accuracy << "%" << std::endl;
 

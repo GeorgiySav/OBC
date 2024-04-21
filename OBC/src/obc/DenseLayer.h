@@ -27,7 +27,6 @@ namespace obc {
 		}
 
 		const std::vector<double>* Forward(const std::vector<double>* input) override;
-		const std::vector<double>* ForwardGpu(const std::vector<double>* input) override;
 
 		/*
 		Output layout:
@@ -36,9 +35,6 @@ namespace obc {
 		2 - dE/dB
 		*/
 		const std::vector<std::vector<double>> Backward(std::vector<double> output_gradients) override;
-
-		const std::vector<double> Backward(const std::vector<double> output_gradients, double learning_rate) override;
-		const std::vector<double> BackwardGpu(const std::vector<double> output_gradients, double learning_rate) override;
 
 		void SetWeights(const std::vector<double>& weights) {
 			weights_ = weights;

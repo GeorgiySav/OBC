@@ -87,6 +87,39 @@ namespace obc {
 		std::cout << "Number of labels: " << raw_data_.size() << std::endl;
 	}
 
+	void MnistDataHandler::CreateData(int n_per_entry) {
+
+		// create n_per_entry copies of each entry
+		// then apply random transformations to each copy
+
+		std::random_device rnd_device;
+		std::mt19937 engine{ rnd_device() };
+		std::uniform_real_distribution<double> noise_dist{ 0.0, 0.1 };
+		std::uniform_int_distribution<int> translate_dist{ -5, 5 };
+		std::uniform_real_distribution<double> scale_dist{ 0.75, 1.1 };
+
+		int original_size = raw_data_.size();
+		for (int i = 0; i < original_size; i++) {
+			for (int j = 0; j < n_per_entry; j++) {
+				std::shared_ptr<MnistData> d = std::make_shared<MnistData>();
+				d->SetImageData(raw_data_.at(i)->GetImageData());
+				d->SetLabel(raw_data_.at(i)->GetLabel());
+
+				// scale digits
+				d->ScaleImage(scale_dist(engine));
+
+				// move digits around
+				d->TranslateImage(translate_dist(engine), translate_dist(engine));
+
+				// add noise to digits
+				d->ApplyNoise(noise_dist(engine));
+
+				raw_data_.push_back(d);
+			}
+		}
+
+	}
+
 	void MnistDataHandler::SplitData() {
 	
 		std::vector<int> indices;

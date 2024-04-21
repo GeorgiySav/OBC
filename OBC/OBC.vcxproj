@@ -161,7 +161,6 @@
   <ItemGroup>
     <ClCompile Include="src\obc\ActivationLayer.cpp" />
     <ClCompile Include="src\main.cpp" />
-    <CudaCompile Include="src\obc\cuda utilities\cuda_ops.cu" />
     <ClCompile Include="src\obc\ConvolutionalLayer.cpp" />
     <ClCompile Include="src\obc\MaxPoolingLayer.cpp" />
     <ClCompile Include="src\obc\example models\MNIST\MnistDataHandler.cpp" />
@@ -262,8 +261,6 @@
     <ClInclude Include="src\obc\ActivationFunctions.h" />
     <ClInclude Include="src\obc\ActivationLayer.h" />
     <ClInclude Include="src\obc\ConvolutionalLayer.h" />
-    <ClInclude Include="src\obc\cuda utilities\cublas_utils.h" />
-    <ClInclude Include="src\obc\cuda utilities\cuda_ops.h" />
     <ClInclude Include="src\obc\MaxPoolingLayer.h" />
     <ClInclude Include="src\obc\example models\MNIST\MnistDataHandler.h" />
     <ClInclude Include="src\obc\DenseLayer.h" />

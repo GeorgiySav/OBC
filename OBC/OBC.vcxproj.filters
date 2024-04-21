@@ -68,12 +68,6 @@
     <ClInclude Include="src\obc\Network.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\obc\cuda utilities\cublas_utils.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\obc\cuda utilities\cuda_ops.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\obc\Error.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -364,8 +358,5 @@
     <None Include="src\obc\example models\MNIST\t10k-labels.idx1-ubyte" />
     <None Include="src\obc\example models\MNIST\train-images.idx3-ubyte" />
     <None Include="src\obc\example models\MNIST\train-labels.idx1-ubyte" />
-  </ItemGroup>
-  <ItemGroup>
-    <CudaCompile Include="src\obc\cuda utilities\cuda_ops.cu" />
   </ItemGroup>
 </Project>

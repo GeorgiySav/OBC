@@ -31,8 +31,8 @@ namespace obc {
 
 	class Network {
 	public:
-		Network() : gpu_enabled_(false) {}
-		Network(std::initializer_list<Layer*> layers) : gpu_enabled_(false) {
+		Network() {}
+		Network(std::initializer_list<Layer*> layers) {
 			for (auto layer : layers) {
 				layers_.push_back(std::unique_ptr<Layer>(layer));
 			}
@@ -40,19 +40,10 @@ namespace obc {
 		~Network() {	
 		}
 
-		void setGpuEnabled(bool on) { gpu_enabled_ = on; }
-
 		std::vector<double> Predict(const std::vector<double>& input) {
 			const std::vector<double>* output = &input;
-			if (!gpu_enabled_) {
-				for (auto& layer : layers_) {
-					output = layer->Forward(output);
-				}
-			}
-			else {
-				for (auto& layer : layers_) {
-					output = layer->ForwardGpu(output);
-				}
+			for (auto& layer : layers_) {
+				output = layer->Forward(output);
 			}
 			return *output;
 		}
@@ -182,6 +173,5 @@ namespace obc {
 		}
 
 		std::vector<std::unique_ptr<Layer>> layers_;
-		bool gpu_enabled_;
 	};
 }
